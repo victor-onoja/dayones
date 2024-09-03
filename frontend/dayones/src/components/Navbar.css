@@ -41,6 +41,10 @@
   font-weight: 500;
 }
 
+.auth-buttons {
+  display: flex;
+}
+
 .auth-buttons button {
   margin-left: 10px;
 }
