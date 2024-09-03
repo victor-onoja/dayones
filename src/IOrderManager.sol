@@ -5,12 +5,20 @@ pragma solidity 0.8.26;
 interface IOrderNft1155 {
     enum OrderStatus {
         None,
-        Listed,
         Bought,
         InTransit,
         Cancelled,
         Delivered,
         Conflict
+    }
+
+    struct ProductRequest {
+        string name;
+        uint256 price;
+        uint256 lat;
+        uint256 long;
+        uint256 quantity;
+        string productURI;
     }
 
     struct Product {
@@ -19,7 +27,7 @@ interface IOrderNft1155 {
         uint256 price;
         uint256 lat;
         uint256 long;
-        uint256 quantity;
+        uint256 availableQuantity;
         string productURI;
     }
 
@@ -33,9 +41,15 @@ interface IOrderNft1155 {
         OrderStatus status;
         address carrier;
         address buyer;
+
         uint256 quantity;
+        uint256 deliveryFee;
+        uint256 price;
         uint256 timestamp;
         uint256 deliveryTimestamp;
+        
+        bool carrierDelivered;
+        bool buyerRecieved;
     }
 
     function getProduct(uint256 id) external view returns (Product memory);

@@ -1204,6 +1204,17 @@ files = [
 ]
 
 [[package]]
+name = "haversine"
+version = "2.8.1"
+description = "Calculate the distance between 2 points on Earth."
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "haversine-2.8.1-py2.py3-none-any.whl", hash = "sha256:1acdd7e35115e00346898984acd55b0827d289df434efef98376f0bed37c8fa7"},
+    {file = "haversine-2.8.1.tar.gz", hash = "sha256:ab750caa0c8f2168bd7b00a429757a83a8393be1aa30f91c2becf6b523189e2a"},
+]
+
+[[package]]
 name = "hexbytes"
 version = "1.2.1"
 description = "hexbytes: Python `bytes` subclass that decodes hex, with a readable console output"
@@ -2644,4 +2655,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "b3f43eff26a23b7f899e19a4b7ce3ec09187dedfcf5d40f746988528d249f4a7"
+content-hash = "d02e004af304b71c5087b46c3b73ea4a455dd5cd71828eb8d80af14a78acba83"
