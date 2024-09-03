@@ -26,23 +26,29 @@ contract OrderManager is IOrderManager {
     /// @dev Explain to a developer any extra details
     mapping(address => uint256[]) public ordersByAccount;
 
-    mapping(address => uint256) public advertReciepients;
+    mapping(address => uint256) public advertsPaid;
+
+    mapping(uint256 productId => Advert) public advertisements;
 
     mapping(address => bool) public registeredAdvertReciepient;
 
     uint256 private productId;
     uint256 private orderId;
-    uint256 private advertsPaid;
 
     uint256 public constant CANCELTIMEOUT = 1 days;
     uint256 public constant EXPECTEDTIMEPERKM = 12 minutes;
+
+    address private immutable advertJury;
     uint256[] private productIds;
+    uint256 private totalAdverts;
+    uint256 private totalAdvertSubscribers;
     IERC20 private token;
     uint256 private deliveryFeePerKM;
 
-    constructor() {
+    constructor(address _advertJury) {
         token = IERC20(address(new DayOnesToken()));
         deliveryFeePerKM = 400;
+        advertJury = _advertJury;
     }
 
     // View functions
@@ -69,7 +75,14 @@ contract OrderManager is IOrderManager {
         return getOrdersById(_ids);
     }
 
-    function getAdvertClaimable(address user) external view returns (uint256) {}
+    function getAdvertClaimable(address user) public view returns (uint256) {
+        uint256 _advertsPaid = advertsPaid[user];
+        if (totalAdverts > _advertsPaid) {
+            return totalAdverts - _advertsPaid;
+        } else {
+            return 0;
+        }
+    }
 
     function quoteOrders(OrderRequest[] memory _orders, uint256 lat, uint256 long)
         public
@@ -217,20 +230,40 @@ contract OrderManager is IOrderManager {
         }
     }
 
-    function createAdvertisement(uint256 amountPerView, uint256 totalImpressions, uint256 _productId) external {}
+    function createAdvertisement(uint256 amountPerView, uint256 totalImpressions, uint256 _productId) external {
+        Product memory product = products[_productId];
+        require(msg.sender == product.vendor, "only vendor can create advert");
+        require(product.quantity > 0, "product not available");
+        advertisements[_productId] = Advert({amountPerView: amountPerView, totalImpressions: totalImpressions});
+        totalAdverts += amountPerView;
+    }
 
     function subscribeToAdverts() external {
-        // user must not already be subscribed
-        // store msg.sender as a target for adverts
+        require(!registeredAdvertReciepient[msg.sender], "already subscribed");
+        advertsPaid[msg.sender] = totalAdverts;
+        registeredAdvertReciepient[msg.sender] = true;
+        totalAdvertSubscribers += 1;
     }
 
     function unSubscribeToAdverts() external {
-        // user must be subscribed
+        require(registeredAdvertReciepient[msg.sender], "not subscribed");
         // pay user all arreas
-        // unsubscribe the user
+        registeredAdvertReciepient[msg.sender] = false;
+        totalAdvertSubscribers -= 1;
     }
 
-    function claimAdvertRevenue() external {}
+    function markAdvertViewed(uint256 _productId, address user) external {
+        require(msg.sender == advertJury, "only advertJury can mark advert viewed");
+        Advert memory advert = advertisements[_productId];
+        advert.totalImpressions -= 1;
+    }
+
+    function claimAdvertRevenue() external {
+        require(registeredAdvertReciepient[msg.sender], "not subscribed");
+        uint256 value = getAdvertClaimable(msg.sender);
+        advertsPaid[msg.sender] = totalAdverts;
+        token.safeTransfer(msg.sender, value);
+    }
 
     // External functions
 
@@ -241,7 +274,12 @@ contract OrderManager is IOrderManager {
         returns (uint256)
     {}
 
-    function calculateDeliveryFee(uint256 distance, uint256 quantity) private returns (uint256) {}
+    function calculateDeliveryFee(uint256 distance, uint256 quantity) private returns (uint256) {
+        uint256 unitDelivery = deliveryFeePerKM * distance;
+        uint256 fee = unitDelivery;
+        fee += (unitDelivery * quantity * 2 / 1000);
+        return fee;
+    }
 
     function calculateFee(uint256 totalPrice) private returns (uint256) {
         return totalPrice / 100;

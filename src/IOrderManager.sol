@@ -3,12 +3,29 @@
 pragma solidity 0.8.26;
 
 interface IOrderManager {
+    event ProductListed();
+    event ProductUnlisted();
+    event ProductUpdated();
+    event CarrierAssigned();
+    event ProductBought();
+    event OrderCancelled();
+    event DeliveryStarted();
+    event DeliveryCompleted();
+    event AdvertSubscribed();
+    event AdvertUnsubscribed();
+    event AdvertPaid();
+
     enum OrderStatus {
         None,
         Bought,
         InTransit,
         Cancelled,
         Delivered
+    }
+
+    struct Advert {
+        uint256 amountPerView;
+        uint256 totalImpressions;
     }
 
     struct ProductRequest {
