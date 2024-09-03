@@ -38,7 +38,7 @@ contract OrderManager is IOrderManager {
     uint256 public constant CANCELTIMEOUT = 1 days;
     uint256 public constant EXPECTEDTIMEPERKM = 12 minutes;
 
-    address private immutable advertJury;
+    address private advertJury;
     uint256[] private productIds;
     uint256 private totalAdverts;
     uint256 private totalAdvertSubscribers;
@@ -187,16 +187,17 @@ contract OrderManager is IOrderManager {
         // must not be in transit already
         Order memory order = orders[id];
         bool refundable = false;
-        require(msg.sender == order.buyer, "only the buyer can cancel an order");
+        require(msg.sender == order.buyer || mag.sender == order.product.vendor, "only the buyer or vendor can cancel an order");
 
         if (order.status == OrderStatus.Bought && (order.timestamp + CANCELTIMEOUT > block.timestamp)) {
             refundable = true;
         }
-
         if (order.status == OrderStatus.InTransit && order.deliveryTimestamp < block.timestamp) {
             refundable = true;
         }
-
+        if (msg.sender == order.product.vendor) {
+            refundable = true;
+        }
         if (refundable) {
             order.status = OrderStatus.Cancelled;
             // refund the user

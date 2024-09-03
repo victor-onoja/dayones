@@ -82,3 +82,15 @@ def logout_request(request: Request, session: db.Session = Depends(get_session))
     if admin_session:
         db.delete(session, admin_session[0])
         return "Logged Out"
+    
+@app.get("/orders")
+def get_orders():
+    ...
+
+@app.get("/products")
+def get_products():
+    ...
+
+@app.post("/signup_request")
+def signup_request():
+    ...
