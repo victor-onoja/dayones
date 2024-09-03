@@ -24,6 +24,8 @@
 
 - subscribe to advertisement
 
+- claim advert revenue
+
 <!-- - faucet(userId) -->
 
 ## screens
