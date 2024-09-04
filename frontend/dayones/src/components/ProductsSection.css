@@ -2,6 +2,10 @@
   padding: 60px 0;
 }
 
+.products-section .container {
+  display: grid;
+}
+
 .product-grid {
   display: flex;
   justify-content: space-between;
@@ -31,6 +35,10 @@
 .product-item p {
   font-size: 16px;
   margin-bottom: 20px;
+}
+
+.reverse .btn-secondary {
+  margin-bottom: 12px;
 }
 
 .center-image {

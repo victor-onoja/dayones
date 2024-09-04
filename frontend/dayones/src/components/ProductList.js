@@ -3,7 +3,7 @@ import { Heart } from "lucide-react";
 import logo from "./logo.png";
 import "./ProductList.css";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, myProducts }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
 
@@ -27,20 +27,27 @@ const ProductCard = ({ product }) => {
         <p className="product-category">{product.category}</p>
         <div className="product-price-container">
           <img src={logo} alt="Day One" className="dayones-logo" />
-          <span className="product-price">{product.price} day1</span>
+          <span className="product-price">{product.price} DAY1</span>
         </div>
-        <button
-          className={`add-to-cart-button ${isAdded ? "added" : ""}`}
-          onClick={() => setIsAdded(!isAdded)}
-        >
-          {isAdded ? "Added to cart" : "Add to cart"}
-        </button>
+        {!myProducts ? (
+          <button
+            className={`add-to-cart-button ${isAdded ? "added" : ""}`}
+            onClick={() => setIsAdded(!isAdded)}
+          >
+            {isAdded ? "Added to cart" : "Add to cart"}
+          </button>
+        ) : (
+          <div className="my-products-buttons">
+            <button className="unlist-product-button">Unlist Product</button>
+            <button className="update-product-button">Update Product</button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-const ProductList = ({ horizontal = false }) => {
+const ProductList = ({ horizontal = false, myProducts = false }) => {
   // Mock data for demonstration
   const products = [
     {
@@ -96,7 +103,11 @@ const ProductList = ({ horizontal = false }) => {
   return (
     <div className={`product-list ${horizontal ? "horizontal" : "vertical"}`}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard
+          key={product.id}
+          product={product}
+          myProducts={myProducts}
+        />
       ))}
     </div>
   );

@@ -6,7 +6,6 @@
 
 .product-list.horizontal {
   overflow-x: auto;
-  /* white-space: nowrap; */
 }
 
 .product-list.vertical {
@@ -100,6 +99,28 @@
   background-color: transparent;
   border: 1px solid #006400;
   color: #006400;
+}
+
+.my-products-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.unlist-product-button,
+.update-product-button {
+  width: 48%;
+  padding: 10px;
+  background-color: #006400;
+  color: #e6f3e6;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.unlist-product-button:hover,
+.update-product-button:hover {
+  background-color: #004d00;
 }
 
 @media (max-width: 768px) {

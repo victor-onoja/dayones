@@ -16,6 +16,6 @@ docs/
 # project specific
 .venv
 workspace.bat
-
+.secret
 
 frontend/dayones/node_modules/

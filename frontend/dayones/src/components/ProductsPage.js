@@ -4,11 +4,9 @@ import ProductsNavbar from "./ProductsNavbar";
 import OfferBanner from "./OfferBanner";
 import CategoryFilter from "./CategoryFilter";
 import ProductList from "./ProductList";
-// import ProductsFooter from "./ProductsFooter";
 
 const ProductsPage = () => {
   const [showMyProducts, setShowMyProducts] = useState(false);
-  // const [showFooter, setShowFooter] = useState(true);
 
   return (
     <div className="products-page">
@@ -25,7 +23,7 @@ const ProductsPage = () => {
                 />
                 <span className="slider round"></span>
               </label>
-              <span>{showMyProducts ? "My Products" : "All Products"}</span>
+              <span>{showMyProducts ? "My Products" : "Products"}</span>
             </div>
             <button className="btn-list-product">List Product</button>
           </div>
@@ -35,29 +33,31 @@ const ProductsPage = () => {
 
         <CategoryFilter />
 
-        <section className="featured-products">
-          <div className="container">
-            <h2>Shop your favorite products</h2>
-            <ProductList horizontal />
-          </div>
-        </section>
+        {!showMyProducts && (
+          <>
+            <section className="featured-products">
+              <div className="container">
+                <h2>Shop your favorite products</h2>
+                <ProductList horizontal />
+              </div>
+            </section>
 
-        <section className="interested-products">
-          <div className="container">
-            <h2>You might also be interested in</h2>
-            <ProductList horizontal />
-          </div>
-        </section>
+            <section className="interested-products">
+              <div className="container">
+                <h2>You might also be interested in</h2>
+                <ProductList horizontal />
+              </div>
+            </section>
+          </>
+        )}
 
         <section className="all-products">
           <div className="container">
-            <h2>All Products</h2>
-            <ProductList />
+            <h2>{showMyProducts ? "My Products" : "All Products"}</h2>
+            <ProductList myProducts={showMyProducts} />
           </div>
         </section>
       </div>
-
-      {/* {showFooter && <ProductsFooter onDismiss={() => setShowFooter(false)} />} */}
     </div>
   );
 };

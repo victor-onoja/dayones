@@ -6,7 +6,8 @@ const OfferBanner = () => {
     <section className="offer-banner">
       <div className="container banner-content">
         <div className="banner-text">
-          <h2>Offers as low as up to 50% off on Clothes and Electronics</h2>
+          <h2>Enter a new realm with these gadgets </h2>
+          <h2>UP TO 30% OFF</h2>
           <button className="btn-buy-now">Buy Now</button>
         </div>
         <div className="banner-image">

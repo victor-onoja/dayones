@@ -12,9 +12,9 @@ const HeroSection = () => {
             Experience seamless transactions in a decentralized marketplace
           </h1>
           <p>
-            Welcome to the future of e-commerce. Our platform empowers you to
-            trade safely and securely using cryptocurrency by leveraging the
-            power and security of blockchain and smart contracts.
+            What if you could shop with ZERO fear of fraud? Dayones gives you
+            the peace of mind to shop safely and securely using the power and
+            security of blockchain technology.
           </p>
           <div className='hero-buttons'>
             <SecondaryButton children={'Read more'} />

@@ -24,6 +24,8 @@ interface IOrderManager {
     }
 
     struct Advert {
+        address creator;
+        uint256 productId;
         uint256 amountPerView;
         uint256 totalImpressions;
     }
@@ -31,8 +33,8 @@ interface IOrderManager {
     struct ProductRequest {
         string name;
         uint256 price;
-        uint256 lat;
-        uint256 long;
+        int256 lat;
+        int256 long;
         uint256 quantity;
         string productURI;
     }
@@ -41,8 +43,8 @@ interface IOrderManager {
         address vendor;
         string name;
         uint256 price;
-        uint256 lat;
-        uint256 long;
+        int256 lat;
+        int256 long;
         uint256 quantity;
         string productURI;
     }
@@ -68,28 +70,23 @@ interface IOrderManager {
 
     function getProduct(uint256 id) external view returns (Product memory);
 
-    function getProducts() external view returns (uint256[] memory);
-
-    function quoteOrders(OrderRequest[] memory orders, uint256 lat, uint256 long)
+    function quoteOrders(OrderRequest[] memory _orders, int256 lat, int256 long)
         external
-        view
         returns (uint256 totalamount, uint256 totalDelivery, uint256 distance);
 
-    function listProducts(Product[] memory products) external;
+    function listProduct(ProductRequest memory product) external;
 
-    function unlistProducts(uint256[] memory ids) external;
+    function unlistProduct(uint256 id) external;
 
-    function updateProducts(uint256[] memory ids, Product[] memory products) external;
+    function updateProduct(uint256 id, ProductRequest memory _product) external;
 
-    function assignCarriers(uint256[] memory ids, address[] memory carriers) external;
+    function assignCarrier(uint256 id, address carrier) external;
 
-    function setDefaultCarrier(address carrier) external;
+    function buyProducts(OrderRequest memory _order, int256 lat, int256 long) external;
 
-    function buyProducts(Order[] memory orders, uint256 lat, uint256 long) external;
+    function cancelOrder(uint256 id) external;
 
-    function cancelBuys(uint256[] memory ids) external;
+    function startDelivery(uint256 id) external;
 
-    function startDeliverys(uint256[] memory id) external;
-
-    function markDeliverys(uint256[] memory id) external;
+    function markDelivery(uint256 id) external;
 }

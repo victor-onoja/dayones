@@ -83,6 +83,7 @@ input:checked + .slider:before {
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  max-width: fit-content;
 }
 
 .featured-products,
@@ -112,5 +113,9 @@ input:checked + .slider:before {
 
   .btn-list-product {
     margin-top: 10px;
+  }
+
+  .products-content {
+    padding-top: 125px;
   }
 }
