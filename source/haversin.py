@@ -28,15 +28,43 @@ def harversin2(lng1, lat1, lng2, lat2):
 
 
 def _haversine_kernel(lat1, lng1, lat2, lng2):
+
+    # uint256 dlat = absolute(lat2 - lat1);
+    # uint256 dlon = absolute(lon2 - lon1);
+    # int256 sin_lat = Trigonometry.sin(dlat / 2);
+    # int256 sin_long = Trigonometry.sin(dlon / 2);
+    # int256 cos_lat1 = Trigonometry.cos(absolute(lat1));
+    # int256 cos_lat2 = Trigonometry.cos(absolute(lat2));
+
+
     lat1 = radians(lat1)
     lng1 = radians(lng1)
     lat2 = radians(lat2)
     lng2 = radians(lng2)
 
-    lat = lat2 - lat1
-    print(lat)
+    dlat = lat2 - lat1
+    dlon = lng2 - lng1
+
+    sin_lat = sin(dlat / 2)
+    sin_lon = sin(dlon / 2)
+    cos_lat1 = cos(lat1)
+    cos_lat2 = cos(lat2)
+    sin_lat2 = (sin_lat * sin_lat)
+    sin_lon2 = (sin_lon * sin_lon)
+
     lng = lng2 - lng1
-    d = (sin(lat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(lng / 2) ** 2)
+    d = (sin_lat2 + cos_lat1 * cos_lat2 * sin_lon2)
+    
+    print(dlat)
+    print(dlon)
+
+    print(sin_lat)
+    print(sin_lon)
+    print(cos_lat1)
+    print(cos_lat2)
+    print(sin_lat2)
+    print(sin_lon2)
+
     print(d)
     print(sqrt(d))
     return ER * 2 * asin(sqrt(d))
@@ -57,8 +85,8 @@ lat2 = -34.920345
 # lon2 = -118.243683
 # lat2 = 4.052235
 
-print(haversin(lon1, lat1, lon2, lat2))
-print(harversin2(lon1, lat1, lon2, lat2))
+# print(haversin(lon1, lat1, lon2, lat2))
+# print(harversin2(lon1, lat1, lon2, lat2))
 
 
 from haversine import haversine, Unit
@@ -66,5 +94,5 @@ from haversine import haversine, Unit
 lyon = (lat1, lon1) # (lat, lon)
 paris = (lat2, lon2)
 
-print(haversine(lyon, paris))
+# print(haversine(lyon, paris))
 print(_haversine_kernel(lat1, lon1, lat2, lon2))

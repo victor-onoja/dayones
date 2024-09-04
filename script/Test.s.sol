@@ -3,6 +3,8 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
+
+import "forge-std/console.sol";
 import "solidity-trigonometry/Trigonometry.sol";
 import "solidity-trigonometry/InverseTrigonometry.sol";
 import {Haversine} from "../src/Haversine.sol";

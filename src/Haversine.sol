@@ -2,6 +2,8 @@
 
 pragma solidity 0.8.26;
 
+
+import "forge-std/console.sol";
 import "forge-std/Script.sol";
 import "solidity-trigonometry/Trigonometry.sol";
 import "solidity-trigonometry/InverseTrigonometry.sol";
@@ -31,9 +33,28 @@ library Haversine {
         int256 sin_long = Trigonometry.sin(dlon / 2);
         int256 cos_lat1 = Trigonometry.cos(absolute(lat1));
         int256 cos_lat2 = Trigonometry.cos(absolute(lat2));
-        uint256 d = uint256((sin_lat * sin_lat) + (cos_lat1 * cos_lat2 * sin_long * sin_long));
+        int256 sin_lat2 = (sin_lat * sin_lat) / 1 ether;
+        int256 sin_long2 = (sin_long * sin_long) / 1 ether;
 
-        return EARTH_RADIUS * 2 * InverseTrigonometry.arcsin(int256(Math.sqrt(d)));
+        uint256 d = uint256(sin_lat2 + (cos_lat1 * cos_lat2 * sin_long2 / 1 ether / 1 ether));
+        
+
+        console.logUint(dlat);
+        console.logUint(dlon);
+
+        console.logInt(sin_lat);
+        console.logInt(sin_long);
+        console.logInt(cos_lat1);
+        console.logInt(cos_lat2);
+
+        console.logInt(sin_lat2);
+        console.logInt(sin_long2);
+        console.logUint(d);
+        console.logUint(Math.sqrt(d));
+
+        // return (sin_lat * sin_lat) + (cos_lat1 * cos_lat2 * sin_long * sin_long) / 1 ether;
+
+        return EARTH_RADIUS * 2 * InverseTrigonometry.arcsin(int256(Math.sqrt(d) * 1000000000));
 
     }
 }
