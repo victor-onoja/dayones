@@ -114,4 +114,8 @@ input:checked + .slider:before {
   .btn-list-product {
     margin-top: 10px;
   }
+
+  .products-content {
+    padding-top: 125px;
+  }
 }

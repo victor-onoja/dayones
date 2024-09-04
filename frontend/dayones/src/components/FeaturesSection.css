@@ -12,6 +12,10 @@
   color: #fff;
 }
 
+.features-section .container {
+  display: grid;
+}
+
 .features-grid {
   display: flex;
   justify-content: space-between;
