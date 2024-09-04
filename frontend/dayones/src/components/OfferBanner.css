@@ -1,0 +1,53 @@
+.offer-banner {
+  background-color: #e6f3e6; /* Light green */
+  border-radius: 10px;
+  margin: 0px 0;
+  overflow: hidden;
+}
+
+.banner-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.banner-text {
+  flex: 1;
+}
+
+.banner-text h2 {
+  color: #006400; /* Dark green */
+  margin-bottom: 20px;
+}
+
+.btn-buy-now {
+  background-color: #006400;
+  color: #e6f3e6;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.banner-image {
+  /* flex: 1; */
+  text-align: right;
+}
+
+.banner-image img {
+  max-width: 100%;
+  /* height: auto; */
+}
+
+@media (max-width: 768px) {
+  .banner-content {
+    flex-direction: column;
+  }
+
+  .banner-image {
+    margin-top: 20px;
+    text-align: center;
+  }
+}

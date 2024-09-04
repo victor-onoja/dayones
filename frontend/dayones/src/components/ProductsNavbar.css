@@ -1,0 +1,106 @@
+.navbar {
+  background-color: #fff;
+  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #006400; /* Dark green */
+}
+
+.nav-links {
+  display: flex;
+  list-style-type: none;
+}
+
+.nav-links li {
+  margin: 0 15px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.nav-icons {
+  display: flex;
+}
+
+.nav-icons div {
+  margin-left: 20px;
+}
+
+.profile-dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  border-radius: 5px;
+  min-width: 200px;
+}
+
+.user-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.user-email {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.btn-connect-wallet {
+  background-color: #ffa500; /* Orange */
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .navbar-content {
+    flex-direction: column;
+  }
+
+  .nav-links {
+    margin: 15px 0;
+  }
+
+  /* .nav-icons {
+    width: 100%;
+    justify-content: flex-end;
+  } */
+}
