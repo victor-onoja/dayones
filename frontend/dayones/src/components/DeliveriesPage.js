@@ -1,11 +1,9 @@
-import React, { useState } from "react";
-import "./OrdersPage.css";
+import React from "react";
+import "./DeliveriesPage.css";
 import ProductsNavbar from "./ProductsNavbar";
 import { Search, ChevronDown } from "lucide-react";
 
-const OrdersPage = () => {
-  const [showMyOrders, setShowMyOrders] = useState(false);
-
+const DeliveriesPage = () => {
   const orders = [
     {
       id: 1,
@@ -13,8 +11,7 @@ const OrdersPage = () => {
       productName: "Smartphone",
       amount: 5.0,
       qty: 1,
-      carrier: "0x1234...5678",
-      status: "bought",
+      status: "assigned",
     },
     {
       id: 2,
@@ -22,7 +19,6 @@ const OrdersPage = () => {
       productName: "Laptop",
       amount: 1.99,
       qty: 1,
-      carrier: "0x8765...4321",
       status: "in-transit",
     },
     {
@@ -31,7 +27,6 @@ const OrdersPage = () => {
       productName: "Headphones",
       amount: 9.99,
       qty: 2,
-      carrier: "0x2468...1357",
       status: "delivered",
     },
     {
@@ -40,7 +35,6 @@ const OrdersPage = () => {
       productName: "Smartwatch",
       amount: 2.99,
       qty: 1,
-      carrier: "0x1357...2468",
       status: "cancelled",
     },
   ];
@@ -56,17 +50,7 @@ const OrdersPage = () => {
       <div className="orders-content">
         <section className="order-controls">
           <div className="container">
-            <div className="toggle-container">
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={showMyOrders}
-                  onChange={() => setShowMyOrders(!showMyOrders)}
-                />
-                <span className="slider round"></span>
-              </label>
-              <span>{showMyOrders ? "My Orders" : " Orders"}</span>
-            </div>
+            <div className="toggle-container">Deliveries</div>
             <div className="search-filter">
               <div className="search-container">
                 <Search size={20} />
@@ -91,7 +75,7 @@ const OrdersPage = () => {
               <label>Status:</label>
               <select>
                 <option value="">All</option>
-                <option value="bought">Bought</option>
+                <option value="bought">Assigned</option>
                 <option value="in transit">In Transit</option>
                 <option value="delivered">Delivered</option>
                 <option value="cancelled">Cancelled</option>
@@ -108,7 +92,6 @@ const OrdersPage = () => {
                 <th>Product Name</th>
                 <th>Amount</th>
                 <th>Qty</th>
-                <th>Carrier</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -119,12 +102,11 @@ const OrdersPage = () => {
                   <td>{order.productName}</td>
                   <td>{order.amount.toFixed(2)} day1</td>
                   <td>{order.qty}</td>
-                  <td>{order.carrier}</td>
                   <td>
                     <span className={`status-badge ${order.status}`}>
                       {order.status}
                     </span>
-                    {(order.status === "bought" ||
+                    {(order.status === "assigned" ||
                       order.status === "in-transit") && (
                       <div className="status-dropdown">
                         <ChevronDown size={16} />
@@ -161,4 +143,4 @@ const OrdersPage = () => {
   );
 };
 
-export default OrdersPage;
+export default DeliveriesPage;
