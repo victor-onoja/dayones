@@ -17,5 +17,6 @@ docs/
 .venv
 workspace.bat
 .secret
+data/
 
 frontend/dayones/node_modules/

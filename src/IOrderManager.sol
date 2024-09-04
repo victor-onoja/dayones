@@ -82,7 +82,7 @@ interface IOrderManager {
 
     function assignCarrier(uint256 id, address carrier) external;
 
-    function buyProducts(OrderRequest memory _order, int256 lat, int256 long) external;
+    function buyProducts(OrderRequest[] memory _order, int256 lat, int256 long) external;
 
     function cancelOrder(uint256 id) external;
 
