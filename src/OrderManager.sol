@@ -7,10 +7,8 @@ import {DayOnesToken} from "./DayOnesToken.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-/// @title A title that should describe the contract/interface
-/// @author The name of the author
-/// @notice Explain to an end user what this does
-/// @dev Explain to a developer any extra details
+/// @title The main contract thet handles transactions
+/// @author Mfon Stephen Nwa
 contract OrderManager is IOrderManager {
     using SafeERC20 for IERC20;
 
@@ -27,7 +25,7 @@ contract OrderManager is IOrderManager {
     uint256[] public advertIds;
 
     mapping(address => uint256) public advertsPaid;
-    address private advertJury;
+    address public advertJury;
     mapping(address => bool) public registeredAdvertReciepient;
 
     mapping(address => bool) public verifiedusers;
@@ -36,10 +34,11 @@ contract OrderManager is IOrderManager {
     uint256 public constant CANCELTIMEOUT = 1 days;
     uint256 public constant EXPECTEDTIMEPERKM = 12 minutes;
 
+    uint256 private deliveryFeePerKM;
 
     uint256 private totalAdverts;
     uint256 private totalAdvertSubscribers;
-    uint256 private deliveryFeePerKM;
+    
     IERC20 private token;
 
     constructor(address _advertJury) {
@@ -55,7 +54,7 @@ contract OrderManager is IOrderManager {
         return products[id];
     }
 
-    function getBuyableProducts(address user) external view returns (Product[] memory _products) {
+    function getBuyableProducts(address user) external view returns (Product[] memory) {
         uint256 productCount;
         Product[] memory _products = new Product[](productIds.length);
         for(uint256 i = 0; i < productIds.length; i++) {
@@ -68,7 +67,7 @@ contract OrderManager is IOrderManager {
         return _products;
     }
 
-    function getListedProducts(address user) external view returns (Product[] memory _products) {
+    function getListedProducts(address user) external view returns (Product[] memory) {
         uint256 productCount;
         Product[] memory _products = new Product[](productIds.length);
         for(uint256 i = 0; i < productIds.length; i++) {
@@ -81,7 +80,7 @@ contract OrderManager is IOrderManager {
         return _products;
     }
 
-    function getBoughtOrders(address user) external view returns (Order[] memory _orders) {
+    function getBoughtOrders(address user) external view returns (Order[] memory) {
         uint256 orderCount = 0;
         Order[] memory _orders = new Order[](orderIds.length);
         for(uint256 i = 0; i < orderIds.length; i++) {
@@ -94,7 +93,7 @@ contract OrderManager is IOrderManager {
         return _orders;
     }
 
-    function getOrdersFromVendor(address user) external view returns (Order[] memory _orders) {
+    function getOrdersFromVendor(address user) external view returns (Order[] memory) {
         uint256 orderCount = 0;
         Order[] memory _orders = new Order[](orderIds.length);
         for(uint256 i = 0; i < orderIds.length; i++) {
@@ -107,7 +106,7 @@ contract OrderManager is IOrderManager {
         return _orders;
     }
 
-    function getOrdersToDeliver(address user) external view returns (Order memory) {
+    function getOrdersToDeliver(address user) external view returns (Order[] memory) {
         uint256 orderCount = 0;
         Order[] memory _orders = new Order[](orderIds.length);
         for(uint256 i = 0; i < orderIds.length; i++) {
@@ -124,9 +123,9 @@ contract OrderManager is IOrderManager {
         uint256 advertCount = 0;
         Advert[] memory _adverts = new Advert[](advertIds.length);
         for(uint256 i = 0; i < advertIds.length; i++) {
-            Order memory advert = advertisements[advertIds[i]];
-            if(_advert.creator == user) {
-                _orders[advertCount] = advert;
+            Advert memory advert = advertisements[advertIds[i]];
+            if(advert.creator == user) {
+                _adverts[advertCount] = advert;
                 advertCount += 1;
             }
         }
@@ -137,9 +136,9 @@ contract OrderManager is IOrderManager {
         uint256 advertCount = 0;
         Advert[] memory _adverts = new Advert[](advertIds.length);
         for(uint256 i = 0; i < advertIds.length; i++) {
-            Order memory advert = advertisements[advertIds[i]];
-            if(_advert.creator != user && advert.totalImpressions > 0) {
-                _orders[advertCount] = advert;
+            Advert memory advert = advertisements[advertIds[i]];
+            if(advert.creator != user && advert.totalImpressions > 0) {
+                _adverts[advertCount] = advert;
                 advertCount += 1;
             }
         }
@@ -156,11 +155,11 @@ contract OrderManager is IOrderManager {
         }
     }
 
-    function isVerified(address user) external pure returns (bool) {
+    function isVerified(address user) external view returns (bool) {
         return verifiedusers[user];
     }
 
-    function verifyUser() external {
+    function verifyUser(address user) external {
         require(user == advertJury, "only jury can call");
         verifiedusers[user] = true;
     }
@@ -226,12 +225,12 @@ contract OrderManager is IOrderManager {
 
     function assignCarrier(uint256 id, address carrier) external {
         // must be the vendor
-        Order memory order = orders[id];
+        Order storage order = orders[id];
         require(order.product.vendor == msg.sender, "only vendor can assign carrier");
         order.carrier = carrier;
     }
 
-    function buyProducts(OrderRequest memory _order, uint256 lat, uint256 long) external {
+    function buyProducts(OrderRequest memory _order, int256 lat, int256 long) external {
         // cannot be a vendor
         Product memory product = products[_order.id];
         require(product.vendor != msg.sender, "cannot buy your own product");
@@ -291,7 +290,7 @@ contract OrderManager is IOrderManager {
 
     function startDelivery(uint256 id) external {
         // must be the carrier for the product
-        Order memory order = orders[id];
+        Order storage order = orders[id];
         require(msg.sender == order.carrier);
         require(order.status == OrderStatus.Bought, "can only start delivery for newly bought products");
         order.status = OrderStatus.InTransit;
@@ -318,6 +317,7 @@ contract OrderManager is IOrderManager {
 
             order.status = OrderStatus.Delivered;
         }
+        orders[id] = order;
 
         removeOrder(id);
     }
@@ -329,7 +329,7 @@ contract OrderManager is IOrderManager {
         require(product.quantity > 0, "product not available");
         totalAdverts += amountPerView;
         advertisements[_productId] =
-            Advert({amountPerView: amountPerView, totalImpressions: totalImpressions, productId: _productId});
+            Advert({creator: msg.sender, amountPerView: amountPerView, totalImpressions: totalImpressions, productId: _productId});
         advertIds.push(advertId);
         advertId += 1;
     }
@@ -350,7 +350,7 @@ contract OrderManager is IOrderManager {
 
     function markAdvertViewed(uint256 _productId, address) external {
         require(msg.sender == advertJury, "only advertJury can mark advert viewed");
-        Advert memory advert = advertisements[_productId];
+        Advert storage advert = advertisements[_productId];
         advert.totalImpressions -= 1;
     }
 
@@ -377,14 +377,10 @@ contract OrderManager is IOrderManager {
         return fee;
     }
 
-    function calculateFee(uint256 totalPrice) private returns (uint256) {
-        return totalPrice / 100;
-    }
-
     function removeOrder(uint256 id) private {
         uint256 index;
         for (uint256 i = 0; i < orderIds.length; i++) {
-            if (orders[orderIds[i]].id == id) {
+            if (orderIds[i] == id) {
                 index = i;
                 break;
             }
@@ -392,10 +388,11 @@ contract OrderManager is IOrderManager {
         orderIds[index] = orderIds[orderIds.length];
         orderIds.pop();
     }
+    
     function removeProduct(uint256 id) private {
         uint256 index;
         for (uint256 i = 0; i < productIds.length; i++) {
-            if (products[productIds[i]].id == id) {
+            if (productIds[i] == id) {
                 index = i;
                 break;
             }
@@ -406,7 +403,7 @@ contract OrderManager is IOrderManager {
     function removeAdvert(uint256 id) private {
         uint256 index;
         for (uint256 i = 0; i < advertIds.length; i++) {
-            if (advertisements[advertIds[i]].id == id) {
+            if (advertIds[i] == id) {
                 index = i;
                 break;
             }

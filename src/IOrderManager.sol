@@ -33,8 +33,8 @@ interface IOrderManager {
     struct ProductRequest {
         string name;
         uint256 price;
-        uint256 lat;
-        uint256 long;
+        int256 lat;
+        int256 long;
         uint256 quantity;
         string productURI;
     }
@@ -70,7 +70,7 @@ interface IOrderManager {
 
     function getProduct(uint256 id) external view returns (Product memory);
 
-    function quoteOrders(OrderRequest[] memory orders, uint256 lat, uint256 long)
+    function quoteOrders(OrderRequest[] memory _orders, int256 lat, int256 long)
         external
         returns (uint256 totalamount, uint256 totalDelivery, uint256 distance);
 
@@ -82,7 +82,7 @@ interface IOrderManager {
 
     function assignCarrier(uint256 id, address carrier) external;
 
-    function buyProducts(OrderRequest memory _order, uint256 lat, uint256 long) external;
+    function buyProducts(OrderRequest memory _order, int256 lat, int256 long) external;
 
     function cancelOrder(uint256 id) external;
 

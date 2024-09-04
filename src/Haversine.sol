@@ -3,13 +3,12 @@
 pragma solidity 0.8.26;
 
 
-import "forge-std/console.sol";
+// import "forge-std/console.sol";
 import "forge-std/Script.sol";
 import "solidity-trigonometry/Trigonometry.sol";
 import "solidity-trigonometry/InverseTrigonometry.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
-// import
 
 library Haversine {
     int256 private constant EARTH_RADIUS = 6372;
