@@ -1,8 +1,20 @@
 import React from "react";
 import "./Navbar.css";
 import logo from "./logo.png";
+import { PrimaryButton, SecondaryButton } from "./buttons";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+
+    const navigate = useNavigate();
+
+    const handleLoginClick = () => {
+      navigate('/login');
+    };
+
+    const handleSignupClick = () => {
+      navigate('/signup');
+    };
   return (
     <nav className="navbar">
       <div className="container navbar-content">
@@ -25,8 +37,8 @@ const Navbar = () => {
           </li>
         </ul>
         <div className="auth-buttons">
-          <button className="btn-login">Login</button>
-          <button className="signup-btn">Signup</button>
+          <PrimaryButton children={"Login"} onClick={handleLoginClick}/>
+          <SecondaryButton children={"Signup"} onClick={handleSignupClick}/>
         </div>
       </div>
     </nav>
