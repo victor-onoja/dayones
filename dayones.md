@@ -108,3 +108,23 @@ the main thing the backend does is
 - list products
 - unlist products
 - update product
+
+# frontend additions
+
+- round the edges of the center image in the image section
+-
+
+# DEV IMPROVEMENT
+- add map view, address and current location; product delivery lifecycle tracking
+- conflict
+- targeted ads with ai
+-
+
+# distance calculation
+from argentina to paris
+
+city, lat long
+paris; 48.866699 2.483300
+argentina; -34.920345 -57.969559
+
+11064.89 km

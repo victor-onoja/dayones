@@ -30,6 +30,7 @@ app.add_middleware(
 )
 
 SIGNATURE_EXPIRY = 300  # 5 minutes in seconds
+DEVMODE = False # by default false
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

@@ -62,6 +62,20 @@ contract OrderManager is IOrderManager {
         ids = productIds;
     }
 
+    function getBuyableProducts(address user) external view returns (Product[] memory _products) {}
+
+    function getListedProducts(address user) external view returns (Product[] memory _products) {}
+
+    function getBoughtOrders(address user) external view returns (Order[] memory _orders) {}
+
+    function getOrdersFromVendor(address user) external view returns (Order[] memory _orders) {}
+
+    function getOrdersToDeliver(address user) external view returns (Order memory _orders) {}
+
+    function getAdvertsCreated(address user) external view returns (Advert[] memory) {}
+
+    function getAdvertsFeed(address user) external view returns (Advert[] memory) {}
+
     function getOrdersById(uint256[] memory id) public view returns (Order[] memory) {
         Order[] memory _orders = new Order[](id.length);
         for (uint256 i = 0; i < id.length; i++) {
@@ -84,9 +98,12 @@ contract OrderManager is IOrderManager {
         }
     }
 
+    function isVerified(address) external pure returns (bool) {
+        return true;
+    }
+
     function quoteOrders(OrderRequest[] memory _orders, uint256 lat, uint256 long)
         public
-        view
         returns (uint256 totalamount, uint256 totalDelivery, uint256 distance)
     {
         for (uint256 i = 0; i < _orders.length; i++) {
@@ -187,7 +204,10 @@ contract OrderManager is IOrderManager {
         // must not be in transit already
         Order memory order = orders[id];
         bool refundable = false;
-        require(msg.sender == order.buyer || mag.sender == order.product.vendor, "only the buyer or vendor can cancel an order");
+        require(
+            msg.sender == order.buyer || msg.sender == order.product.vendor,
+            "only the buyer or vendor can cancel an order"
+        );
 
         if (order.status == OrderStatus.Bought && (order.timestamp + CANCELTIMEOUT > block.timestamp)) {
             refundable = true;
@@ -233,9 +253,11 @@ contract OrderManager is IOrderManager {
 
     function createAdvertisement(uint256 amountPerView, uint256 totalImpressions, uint256 _productId) external {
         Product memory product = products[_productId];
+        // advert must not already be on that product
         require(msg.sender == product.vendor, "only vendor can create advert");
         require(product.quantity > 0, "product not available");
-        advertisements[_productId] = Advert({amountPerView: amountPerView, totalImpressions: totalImpressions});
+        advertisements[_productId] =
+            Advert({amountPerView: amountPerView, totalImpressions: totalImpressions, productId: _productId});
         totalAdverts += amountPerView;
     }
 
@@ -253,7 +275,7 @@ contract OrderManager is IOrderManager {
         totalAdvertSubscribers -= 1;
     }
 
-    function markAdvertViewed(uint256 _productId, address user) external {
+    function markAdvertViewed(uint256 _productId, address) external {
         require(msg.sender == advertJury, "only advertJury can mark advert viewed");
         Advert memory advert = advertisements[_productId];
         advert.totalImpressions -= 1;
