@@ -10,7 +10,7 @@ import "solidity-trigonometry/InverseTrigonometry.sol";
 import {Haversine} from "../src/Haversine.sol";
 
 contract TestContract is Script {
-    function run() public view returns (int256) {
+    function run() public pure returns (int256) {
         // int256 r = Trigonometry.sin(1.5707963267948966 ether);
         // return r;
 

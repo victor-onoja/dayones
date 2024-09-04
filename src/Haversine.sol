@@ -24,7 +24,7 @@ library Haversine {
 
     function haversine(int256 lat1, int256 lat2, int256 lon1, int256 lon2)
         external
-        view
+        pure
         returns (int256)
     {
         uint256 dlat = absolute(lat2 - lat1);
@@ -37,23 +37,8 @@ library Haversine {
         int256 sin_long2 = (sin_long * sin_long) / 1 ether;
 
         uint256 d = uint256(sin_lat2 + (cos_lat1 * cos_lat2 * sin_long2 / 1 ether / 1 ether));
-        
 
-        console.logUint(dlat);
-        console.logUint(dlon);
-
-        console.logInt(sin_lat);
-        console.logInt(sin_long);
-        console.logInt(cos_lat1);
-        console.logInt(cos_lat2);
-
-        console.logInt(sin_lat2);
-        console.logInt(sin_long2);
-        console.logUint(d);
-        console.logUint(Math.sqrt(d));
-
-        // return (sin_lat * sin_lat) + (cos_lat1 * cos_lat2 * sin_long * sin_long) / 1 ether;
-
+        // returns the result scaled by 1e18
         return EARTH_RADIUS * 2 * InverseTrigonometry.arcsin(int256(Math.sqrt(d) * 1000000000));
 
     }
