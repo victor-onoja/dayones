@@ -58,7 +58,7 @@
   position: relative;
 }
 
-.dropdown-content {
+.profile-content {
   position: absolute;
   right: 0;
   top: 100%;
@@ -98,9 +98,4 @@
   .nav-links {
     margin: 15px 0;
   }
-
-  /* .nav-icons {
-    width: 100%;
-    justify-content: flex-end;
-  } */
 }

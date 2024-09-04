@@ -75,7 +75,7 @@ const DeliveriesPage = () => {
               <label>Status:</label>
               <select>
                 <option value="">All</option>
-                <option value="bought">Assigned</option>
+                <option value="assigned">Assigned</option>
                 <option value="in transit">In Transit</option>
                 <option value="delivered">Delivered</option>
                 <option value="cancelled">Cancelled</option>
@@ -117,7 +117,7 @@ const DeliveriesPage = () => {
                                 handleStatusUpdate(order.id, "cancelled")
                               }
                             >
-                              Cancel
+                              cancel
                             </button>
                           )}
                           {order.status === "in-transit" && (
@@ -126,7 +126,7 @@ const DeliveriesPage = () => {
                                 handleStatusUpdate(order.id, "delivered")
                               }
                             >
-                              Delivered
+                              delivered
                             </button>
                           )}
                         </div>

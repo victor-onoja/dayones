@@ -41,7 +41,7 @@ const ProductsNavbar = () => {
             />
 
             {showDropdown && (
-              <div className="dropdown-content">
+              <div className="profile-content">
                 <p className="user-name">Udeme Fon</p>
                 <p className="user-email">ud**********@gmail.com</p>
                 <button className="btn-connect-wallet">Connect Wallet</button>

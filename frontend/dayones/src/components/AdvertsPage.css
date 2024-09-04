@@ -83,7 +83,7 @@ input:checked + .slider:before {
   justify-content: center;
 }
 
-.btn-verify {
+.btn-ver {
   background-color: #006400;
   color: #e6f3e6;
   border: none;
@@ -91,10 +91,6 @@ input:checked + .slider:before {
   border-radius: 5px;
   cursor: pointer;
   margin-right: 10px;
-}
-
-.btn-verify .switch {
-  border: 2px solid red;
 }
 
 .advert-feeds {
