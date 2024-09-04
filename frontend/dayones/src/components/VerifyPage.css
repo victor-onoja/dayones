@@ -1,0 +1,148 @@
+.verify-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.verify-navbar {
+  background-color: #fff;
+  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.verify-navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #006400; /* Dark green */
+}
+
+.verify-text {
+  color: #006400; /* Dark green */
+  font-weight: 600;
+}
+
+.verify-main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.verify-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.verify-image {
+  flex: 1;
+  max-width: 50%;
+}
+
+.verify-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.verify-form {
+  flex: 1;
+  max-width: 500px;
+  padding: 30px;
+}
+
+.verify-form h2 {
+  color: #006400; /* Dark green */
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid #006400; /* Dark green */
+  border-radius: 5px;
+  font-size: 16px;
+  color: #e6f3e6; /* Light green */
+  background-color: #006400; /* Dark green */
+}
+
+.form-group input::placeholder,
+.form-group select {
+  color: #e6f3e6; /* Light green */
+}
+
+.btn-verify {
+  width: 100%;
+  background-color: #006400; /* Dark green */
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .verify-content {
+    flex-direction: column;
+  }
+
+  .verify-image,
+  .verify-form {
+    max-width: 100%;
+  }
+
+  .verify-image {
+    margin-bottom: 30px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

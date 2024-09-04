@@ -6,7 +6,6 @@
 
 .product-list.horizontal {
   overflow-x: auto;
-  /* white-space: nowrap; */
 }
 
 .product-list.vertical {

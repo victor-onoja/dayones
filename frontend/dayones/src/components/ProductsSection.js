@@ -3,7 +3,12 @@ import "./ProductsSection.css";
 import product1 from "./product-image1.png";
 import product2 from "./product-image2.png";
 import product3 from "./product-image3.png";
-import chainlink from "./chainlink-logo.png";
+// import chainlink from "./chainlink-logo.png";
+import liskicon from "./lisk-icon.png";
+import web3bridgeicon from "./web3-bridge-icon.png";
+import web3lagosicon from "./web3-lagos-icon.png";
+import web3jsicon from "./web3js-icon.png";
+import zksyncicon from "./zksync-icon.png";
 
 const ProductsSection = () => {
   return (
@@ -25,23 +30,39 @@ const ProductsSection = () => {
             <img src={product2} alt="Product 2" />
           </div>
           <div className="product-item reverse">
-            <h3>Secure transactions</h3>
+            <img src={product3} alt="Product 3" />
+            <button className="btn-secondary">
+              Learn More <span className="arrow">→</span>
+            </button>
             <p>
               Experience safe and transparent transactions powered by blockchain
               technology
             </p>
-            <button className="btn-secondary">
-              Learn More <span className="arrow">→</span>
-            </button>
-            <img src={product3} alt="Product 3" />
+            <h3>Secure transactions</h3>
           </div>
         </div>
         <div className="powered-by">
           <h4>Powered by:</h4>
           <div className="partner-logos">
             <div className="partner">
-              <img src={chainlink} alt="Chainlink Logo" />
-              <span>Chainlink</span>
+              <img src={liskicon} alt="lisk Logo" />
+              <span>Lisk</span>
+            </div>
+            <div className="partner">
+              <img src={web3bridgeicon} alt="web3 bridge Logo" />
+              <span>Web3 Bridge</span>
+            </div>
+            <div className="partner">
+              <img src={web3lagosicon} alt="web3 lagos Logo" />
+              <span>Web3 Lagos</span>
+            </div>
+            <div className="partner">
+              <img src={web3jsicon} alt="web3js Logo" />
+              <span>Web3JS</span>
+            </div>
+            <div className="partner">
+              <img src={zksyncicon} alt="zksync Logo" />
+              <span>zkSync</span>
             </div>
             {/* Add more partner logos here */}
           </div>

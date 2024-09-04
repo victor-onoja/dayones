@@ -4,6 +4,10 @@
   padding: 60px 0 30px;
 }
 
+.footer .container {
+  display: grid;
+}
+
 .newsletter {
   text-align: center;
   margin-bottom: 40px;
