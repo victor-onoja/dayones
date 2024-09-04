@@ -10,6 +10,7 @@ import linkIcon from "./link-icon.png";
 
 const ListProductPage = () => {
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
+  const [isAdvertEnabled, setIsAdvertEnabled] = useState(true);
 
   return (
     <div className="list-product-page">
@@ -111,6 +112,21 @@ const ListProductPage = () => {
                     required
                   />
                 </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="advert" className="location-label">
+                  Enable Advert-
+                  <div className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      id="advert"
+                      checked={!isAdvertEnabled}
+                      onChange={() => setIsAdvertEnabled(!isAdvertEnabled)}
+                    />
+                    <span className="slider round"></span>
+                  </div>
+                </label>
               </div>
 
               <button type="submit" className="btn-list-product">

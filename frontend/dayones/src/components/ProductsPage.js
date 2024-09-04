@@ -33,24 +33,28 @@ const ProductsPage = () => {
 
         <CategoryFilter />
 
-        <section className="featured-products">
-          <div className="container">
-            <h2>Shop your favorite products</h2>
-            <ProductList horizontal />
-          </div>
-        </section>
+        {!showMyProducts && (
+          <>
+            <section className="featured-products">
+              <div className="container">
+                <h2>Shop your favorite products</h2>
+                <ProductList horizontal />
+              </div>
+            </section>
 
-        <section className="interested-products">
-          <div className="container">
-            <h2>You might also be interested in</h2>
-            <ProductList horizontal />
-          </div>
-        </section>
+            <section className="interested-products">
+              <div className="container">
+                <h2>You might also be interested in</h2>
+                <ProductList horizontal />
+              </div>
+            </section>
+          </>
+        )}
 
         <section className="all-products">
           <div className="container">
-            <h2>All Products</h2>
-            <ProductList />
+            <h2>{showMyProducts ? "My Products" : "All Products"}</h2>
+            <ProductList myProducts={showMyProducts} />
           </div>
         </section>
       </div>
