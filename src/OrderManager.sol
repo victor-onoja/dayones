@@ -32,6 +32,8 @@ contract OrderManager is IOrderManager {
 
     mapping(address => bool) public registeredAdvertReciepient;
 
+    mapping(address => bool) public verifiedusers;
+
     uint256 private productId;
     uint256 private orderId;
 
@@ -39,7 +41,8 @@ contract OrderManager is IOrderManager {
     uint256 public constant EXPECTEDTIMEPERKM = 12 minutes;
 
     address private advertJury;
-    uint256[] private productIds;
+    uint256[] public productIds;
+    uint256[] public orderIds;
     uint256 private totalAdverts;
     uint256 private totalAdvertSubscribers;
     IERC20 private token;
@@ -58,35 +61,77 @@ contract OrderManager is IOrderManager {
         return products[id];
     }
 
-    function getProducts() external view returns (uint256[] memory ids) {
-        ids = productIds;
-    }
-
-    function getBuyableProducts(address user) external view returns (Product[] memory _products) {}
-
-    function getListedProducts(address user) external view returns (Product[] memory _products) {}
-
-    function getBoughtOrders(address user) external view returns (Order[] memory _orders) {}
-
-    function getOrdersFromVendor(address user) external view returns (Order[] memory _orders) {}
-
-    function getOrdersToDeliver(address user) external view returns (Order memory _orders) {}
-
-    function getAdvertsCreated(address user) external view returns (Advert[] memory) {}
-
-    function getAdvertsFeed(address user) external view returns (Advert[] memory) {}
-
-    function getOrdersById(uint256[] memory id) public view returns (Order[] memory) {
-        Order[] memory _orders = new Order[](id.length);
-        for (uint256 i = 0; i < id.length; i++) {
-            _orders[i] = orders[id[i]];
+    function getBuyableProducts(address user) external view returns (Product[] memory _products) {
+        uint256 productCount;
+        Product[] memory _products = new Product[](productIds.length);
+        for(uint256 i = 0; i < productIds.length; i++) {
+            Product memory product = products[productIds[i]];
+            if(product.vendor != user) {
+                _products[productCount] = product;
+                productCount += 1;
+            }
         }
-        return _orders;
+        return _products[0:productCount];
     }
 
-    function getOrdersByAccount(address account) public view returns (Order[] memory) {
-        uint256[] memory _ids = ordersByAccount[account];
-        return getOrdersById(_ids);
+    function getListedProducts(address user) external view returns (Product[] memory _products) {
+        uint256 productCount;
+        Product[] memory _products = new Product[](productIds.length);
+        for(uint256 i = 0; i < productIds.length; i++) {
+            Product memory product = products[productIds[i]];
+            if(product.vendor == user) {
+                _products[productCount] = product;
+                productCount += 1;
+            }
+        }
+        return _products[0:productCount];
+    }
+
+    function getBoughtOrders(address user) external view returns (Order[] memory _orders) {
+        uint256 orderCount = 0;
+        Order[] memory _orders = new Order[](orderIds.length);
+        for(uint256 i = 0; i < orderIds.length; i++) {
+            Order memory order = orders[orderIds[i]];
+            if(order.buyer == user) {
+                _orders[orderCount] = order;
+                orderCount += 1;
+            }
+        }
+        return _orders[0:orderCount];
+    }
+
+    function getOrdersFromVendor(address user) external view returns (Order[] memory _orders) {
+        uint256 orderCount = 0;
+        Order[] memory _orders = new Order[](orderIds.length);
+        for(uint256 i = 0; i < orderIds.length; i++) {
+            Order memory order = orders[orderIds[i]];
+            if(order.product.vendor == user) {
+                _orders[orderCount] = order;
+                orderCount += 1;
+            }
+        }
+        return _orders[0:orderCount];
+    }
+
+    function getOrdersToDeliver(address user) external view returns (Order memory _orders) {
+        uint256 orderCount = 0;
+        Order[] memory _orders = new Order[](orderIds.length);
+        for(uint256 i = 0; i < orderIds.length; i++) {
+            Order memory order = orders[orderIds[i]];
+            if(order.carrier == user) {
+                _orders[orderCount] = order;
+                orderCount += 1;
+            }
+        }
+        return _orders[0:orderCount];
+    }
+
+    function getAdvertsCreated(address user) external view returns (Advert[] memory) {
+
+    }
+
+    function getAdvertsFeed(address user) external view returns (Advert[] memory) {
+
     }
 
     function getAdvertClaimable(address user) public view returns (uint256) {
@@ -98,8 +143,8 @@ contract OrderManager is IOrderManager {
         }
     }
 
-    function isVerified(address) external pure returns (bool) {
-        return true;
+    function isVerified(address user) external pure returns (bool) {
+        return verifiedusers[user];
     }
 
     function quoteOrders(OrderRequest[] memory _orders, uint256 lat, uint256 long)
