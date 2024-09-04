@@ -10,18 +10,20 @@ const FeaturesSection = () => {
         <div className="features-grid">
           <div className="feature">
             <img src={icon} alt="Sell Products Icon" />
-            <h3>Sell Products</h3>
-            <p>Sell products and advertise them efficiently</p>
+            <h3>Sell products and advertise</h3>
+            <p>Sell products and advertise them efficiently.</p>
           </div>
           <div className="feature">
             <img src={icon} alt="Buy Products Icon" />
-            <h3>Buy Products</h3>
-            <p>Browse and purchase items securely</p>
+            <h3>Shop for products</h3>
+            <p>
+              Shop for your favorite products and get paid for advertisements.
+            </p>
           </div>
           <div className="feature">
             <img src={icon} alt="Manage Orders Icon" />
             <h3>Manage Orders</h3>
-            <p>Track and manage your orders easily</p>
+            <p>Track and manage your orders with ease.</p>
           </div>
         </div>
       </div>

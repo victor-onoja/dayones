@@ -55,7 +55,7 @@ const CartPage = () => {
             <img src={item.image} alt={item.name} />
             <div className="item-details">
               <h2>{item.name}</h2>
-              <p>{item.price} day1</p>
+              <p>{item.price} DAY1</p>
             </div>
           </div>
         ))}
@@ -66,8 +66,8 @@ const CartPage = () => {
 
       {quote && (
         <div className="quote-details">
-          <p>Total Price: {quote.totalPrice} day1</p>
-          <p>Total Delivery Fee: {quote.deliveryFee} day1</p>
+          <p>Total Price: {quote.totalPrice} DAY1</p>
+          <p>Total Delivery Fee: {quote.deliveryFee} DAY1</p>
           <button className="btn-buy" onClick={handleBuy}>
             Buy
           </button>

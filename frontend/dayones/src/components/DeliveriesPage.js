@@ -100,7 +100,7 @@ const DeliveriesPage = () => {
                 <tr key={order.id}>
                   <td>{order.date}</td>
                   <td>{order.productName}</td>
-                  <td>{order.amount.toFixed(2)} day1</td>
+                  <td>{order.amount.toFixed(2)} DAY1</td>
                   <td>{order.qty}</td>
                   <td>
                     <span className={`status-badge ${order.status}`}>

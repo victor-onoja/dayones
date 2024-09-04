@@ -43,7 +43,7 @@ const CategoryFilter = () => {
           </div>
           <div className="filter-container">
             <label htmlFor="priceRange" className="price-label">
-              Price: {priceRange.toFixed(1)} Day1
+              Price: {priceRange.toFixed(1)} DAY1
             </label>
             <input
               type="range"

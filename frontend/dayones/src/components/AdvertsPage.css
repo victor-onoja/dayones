@@ -79,6 +79,8 @@ input:checked + .slider:before {
 .advert-actions {
   display: flex;
   align-items: center;
+  gap: 25px;
+  justify-content: center;
 }
 
 .btn-verify {
@@ -89,6 +91,10 @@ input:checked + .slider:before {
   border-radius: 5px;
   cursor: pointer;
   margin-right: 10px;
+}
+
+.btn-verify .switch {
+  border: 2px solid red;
 }
 
 .advert-feeds {
@@ -226,10 +232,12 @@ input:checked + .slider:before {
   .earnings-info {
     flex-direction: column;
     align-items: flex-start;
+    margin-top: 65px;
   }
 
   .advert-actions {
     margin-top: 10px;
+    gap: 0;
   }
 
   .advert-list {

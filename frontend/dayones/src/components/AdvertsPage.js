@@ -97,7 +97,7 @@ const AdvertsPage = () => {
                   <img src={advert.image} alt={advert.title} />
                   <h3>{advert.title}</h3>
                   <p className="advert-category">{advert.category}</p>
-                  <p className="advert-price">{advert.price.toFixed(2)} day1</p>
+                  <p className="advert-price">{advert.price.toFixed(2)} DAY1</p>
                   <button className="btn-add-to-cart">
                     <ShoppingCart size={16} />
                     Add to Cart
@@ -113,7 +113,7 @@ const AdvertsPage = () => {
             <h2>Your Earnings</h2>
             <div className="earnings-info">
               <div className="earnings-amount">
-                <h3>{earnings[earningsTimeframe].toFixed(2)} day1</h3>
+                <h3>{earnings[earningsTimeframe].toFixed(2)} DAY1</h3>
                 <span>this {earningsTimeframe}</span>
               </div>
               <div className="earnings-timeframe">

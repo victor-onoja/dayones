@@ -20,7 +20,7 @@ const ProductsSection = () => {
             <h3>Smooth shopping experience</h3>
             <p>
               Shop for your everyday products while enjoying the benefits and
-              security of web3
+              security of web3.
             </p>
             <button className="btn-secondary">
               Get Started <span className="arrow">→</span>
@@ -35,10 +35,10 @@ const ProductsSection = () => {
               Learn More <span className="arrow">→</span>
             </button>
             <p>
-              Experience safe and transparent transactions powered by blockchain
-              technology
+              Get fast and affordable delivery with real-time product tracking
+              every step of the way.
             </p>
-            <h3>Secure transactions</h3>
+            <h3>Seamless Deliveries</h3>
           </div>
         </div>
         <div className="powered-by">
