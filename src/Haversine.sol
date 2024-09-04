@@ -38,7 +38,6 @@ library Haversine {
 
         uint256 d = uint256(sin_lat2 + (cos_lat1 * cos_lat2 * sin_long2 / 1 ether / 1 ether));
 
-        // returns the result scaled by 1e18
         return EARTH_RADIUS * 2 * InverseTrigonometry.arcsin(int256(Math.sqrt(d) * 1000000000));
 
     }

@@ -24,6 +24,7 @@ interface IOrderManager {
     }
 
     struct Advert {
+        address creator;
         uint256 productId;
         uint256 amountPerView;
         uint256 totalImpressions;
@@ -42,8 +43,8 @@ interface IOrderManager {
         address vendor;
         string name;
         uint256 price;
-        uint256 lat;
-        uint256 long;
+        int256 lat;
+        int256 long;
         uint256 quantity;
         string productURI;
     }
@@ -68,8 +69,6 @@ interface IOrderManager {
     }
 
     function getProduct(uint256 id) external view returns (Product memory);
-
-    function getProducts() external view returns (uint256[] memory);
 
     function quoteOrders(OrderRequest[] memory orders, uint256 lat, uint256 long)
         external
