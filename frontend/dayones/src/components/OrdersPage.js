@@ -5,6 +5,7 @@ import { Search, ChevronDown } from "lucide-react";
 
 const OrdersPage = () => {
   const [showMyOrders, setShowMyOrders] = useState(false);
+  const [carrierInput, setCarrierInput] = useState("");
 
   const orders = [
     {
@@ -48,6 +49,12 @@ const OrdersPage = () => {
   const handleStatusUpdate = (orderId, newStatus) => {
     // Implement status update logic here
     console.log(`Updating order ${orderId} to ${newStatus}`);
+  };
+
+  const handleCarrierAssign = (orderId) => {
+    // Logic to assign carrier
+    console.log(`Assigning carrier ${carrierInput} to order ${orderId}`);
+    setCarrierInput(""); // Clear input after assignment
   };
 
   return (
@@ -124,18 +131,18 @@ const OrdersPage = () => {
                     <span className={`status-badge ${order.status}`}>
                       {order.status}
                     </span>
-                    {(order.status === "bought" ||
+                    {/* {(order.status === "bought" ||
                       order.status === "in-transit") && (
                       <div className="status-dropdown">
                         <ChevronDown size={16} />
                         <div className="dropdown-content">
-                          {order.status === "assigned" && (
+                          {order.status === "bought" && (
                             <button
                               onClick={() =>
                                 handleStatusUpdate(order.id, "cancelled")
                               }
                             >
-                              Cancel
+                              cancel
                             </button>
                           )}
                           {order.status === "in-transit" && (
@@ -144,11 +151,53 @@ const OrdersPage = () => {
                                 handleStatusUpdate(order.id, "delivered")
                               }
                             >
-                              Delivered
+                              delivered
                             </button>
                           )}
                         </div>
                       </div>
+                    )} */}
+                    {showMyOrders ? (
+                      order.status === "bought" ? (
+                        <div className="status-input">
+                          <input
+                            type="text"
+                            placeholder="Enter carrier"
+                            value={carrierInput}
+                            onChange={(e) => setCarrierInput(e.target.value)}
+                          />
+                          <button onClick={() => handleCarrierAssign(order.id)}>
+                            Assign Carrier
+                          </button>
+                        </div>
+                      ) : order.status === "in-transit" ? null : null
+                    ) : (
+                      (order.status === "bought" ||
+                        order.status === "in-transit") && (
+                        <div className="status-dropdown">
+                          <ChevronDown size={16} />
+                          <div className="dropdown-content">
+                            {order.status === "bought" && (
+                              <button
+                                onClick={() =>
+                                  handleStatusUpdate(order.id, "cancelled")
+                                }
+                              >
+                                cancel
+                              </button>
+                            )}
+                            {order.status === "in-transit" && (
+                              <button
+                                onClick={() =>
+                                  handleStatusUpdate(order.id, "delivered")
+                                }
+                              >
+                                delivered
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )
                     )}
                   </td>
                 </tr>
