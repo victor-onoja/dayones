@@ -5,6 +5,8 @@ pragma solidity ^0.8.26;
 import {IOrderManager} from "./IOrderManager.sol";
 import {DayOnesToken} from "./DayOnesToken.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+
+import {Haversine} from "./Haversine.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /// @title The main contract thet handles transactions
@@ -30,7 +32,6 @@ contract OrderManager is IOrderManager {
 
     mapping(address => bool) public verifiedusers;
 
-
     uint256 public constant CANCELTIMEOUT = 1 days;
     uint256 public constant EXPECTEDTIMEPERKM = 12 minutes;
 
@@ -38,7 +39,7 @@ contract OrderManager is IOrderManager {
 
     uint256 private totalAdverts;
     uint256 private totalAdvertSubscribers;
-    
+
     IERC20 private token;
 
     constructor(address _advertJury) {
@@ -57,9 +58,9 @@ contract OrderManager is IOrderManager {
     function getBuyableProducts(address user) external view returns (Product[] memory) {
         uint256 productCount;
         Product[] memory _products = new Product[](productIds.length);
-        for(uint256 i = 0; i < productIds.length; i++) {
+        for (uint256 i = 0; i < productIds.length; i++) {
             Product memory product = products[productIds[i]];
-            if(product.vendor != user) {
+            if (product.vendor != user) {
                 _products[productCount] = product;
                 productCount += 1;
             }
@@ -70,9 +71,9 @@ contract OrderManager is IOrderManager {
     function getListedProducts(address user) external view returns (Product[] memory) {
         uint256 productCount;
         Product[] memory _products = new Product[](productIds.length);
-        for(uint256 i = 0; i < productIds.length; i++) {
+        for (uint256 i = 0; i < productIds.length; i++) {
             Product memory product = products[productIds[i]];
-            if(product.vendor == user) {
+            if (product.vendor == user) {
                 _products[productCount] = product;
                 productCount += 1;
             }
@@ -83,9 +84,9 @@ contract OrderManager is IOrderManager {
     function getBoughtOrders(address user) external view returns (Order[] memory) {
         uint256 orderCount = 0;
         Order[] memory _orders = new Order[](orderIds.length);
-        for(uint256 i = 0; i < orderIds.length; i++) {
+        for (uint256 i = 0; i < orderIds.length; i++) {
             Order memory order = orders[orderIds[i]];
-            if(order.buyer == user) {
+            if (order.buyer == user) {
                 _orders[orderCount] = order;
                 orderCount += 1;
             }
@@ -96,9 +97,9 @@ contract OrderManager is IOrderManager {
     function getOrdersFromVendor(address user) external view returns (Order[] memory) {
         uint256 orderCount = 0;
         Order[] memory _orders = new Order[](orderIds.length);
-        for(uint256 i = 0; i < orderIds.length; i++) {
+        for (uint256 i = 0; i < orderIds.length; i++) {
             Order memory order = orders[orderIds[i]];
-            if(order.product.vendor == user) {
+            if (order.product.vendor == user) {
                 _orders[orderCount] = order;
                 orderCount += 1;
             }
@@ -109,9 +110,9 @@ contract OrderManager is IOrderManager {
     function getOrdersToDeliver(address user) external view returns (Order[] memory) {
         uint256 orderCount = 0;
         Order[] memory _orders = new Order[](orderIds.length);
-        for(uint256 i = 0; i < orderIds.length; i++) {
+        for (uint256 i = 0; i < orderIds.length; i++) {
             Order memory order = orders[orderIds[i]];
-            if(order.carrier == user) {
+            if (order.carrier == user) {
                 _orders[orderCount] = order;
                 orderCount += 1;
             }
@@ -122,9 +123,9 @@ contract OrderManager is IOrderManager {
     function getAdvertsCreated(address user) external view returns (Advert[] memory) {
         uint256 advertCount = 0;
         Advert[] memory _adverts = new Advert[](advertIds.length);
-        for(uint256 i = 0; i < advertIds.length; i++) {
+        for (uint256 i = 0; i < advertIds.length; i++) {
             Advert memory advert = advertisements[advertIds[i]];
-            if(advert.creator == user) {
+            if (advert.creator == user) {
                 _adverts[advertCount] = advert;
                 advertCount += 1;
             }
@@ -135,15 +136,14 @@ contract OrderManager is IOrderManager {
     function getAdvertsFeed(address user) external view returns (Advert[] memory) {
         uint256 advertCount = 0;
         Advert[] memory _adverts = new Advert[](advertIds.length);
-        for(uint256 i = 0; i < advertIds.length; i++) {
+        for (uint256 i = 0; i < advertIds.length; i++) {
             Advert memory advert = advertisements[advertIds[i]];
-            if(advert.creator != user && advert.totalImpressions > 0) {
+            if (advert.creator != user && advert.totalImpressions > 0) {
                 _adverts[advertCount] = advert;
                 advertCount += 1;
             }
         }
         return _adverts;
-
     }
 
     function getAdvertClaimable(address user) public view returns (uint256) {
@@ -166,6 +166,7 @@ contract OrderManager is IOrderManager {
 
     function quoteOrders(OrderRequest[] memory _orders, int256 lat, int256 long)
         public
+        view
         returns (uint256 totalamount, uint256 totalDelivery, uint256 distance)
     {
         for (uint256 i = 0; i < _orders.length; i++) {
@@ -328,8 +329,12 @@ contract OrderManager is IOrderManager {
         require(msg.sender == product.vendor, "only vendor can create advert");
         require(product.quantity > 0, "product not available");
         totalAdverts += amountPerView;
-        advertisements[_productId] =
-            Advert({creator: msg.sender, amountPerView: amountPerView, totalImpressions: totalImpressions, productId: _productId});
+        advertisements[_productId] = Advert({
+            creator: msg.sender,
+            amountPerView: amountPerView,
+            totalImpressions: totalImpressions,
+            productId: _productId
+        });
         advertIds.push(advertId);
         advertId += 1;
     }
@@ -365,12 +370,15 @@ contract OrderManager is IOrderManager {
 
     // Private functions
 
-    function calculateDistanceBetweenCordinates(int256 lat1, int256 long1, int256 lat2, int256 long2)
+    function calculateDistanceBetweenCordinates(int256 lat1, int256 lon1, int256 lat2, int256 lon2)
         private
+        pure
         returns (uint256)
-    {}
+    {
+        return uint256(Haversine.haversine(lat1, lat2, lon1, lon2)) / 1 ether;
+    }
 
-    function calculateDeliveryFee(uint256 distance, uint256 quantity) private returns (uint256) {
+    function calculateDeliveryFee(uint256 distance, uint256 quantity) private view returns (uint256) {
         uint256 unitDelivery = deliveryFeePerKM * distance;
         uint256 fee = unitDelivery;
         fee += (unitDelivery * quantity * 2 / 1000);
@@ -388,7 +396,7 @@ contract OrderManager is IOrderManager {
         orderIds[index] = orderIds[orderIds.length];
         orderIds.pop();
     }
-    
+
     function removeProduct(uint256 id) private {
         uint256 index;
         for (uint256 i = 0; i < productIds.length; i++) {
@@ -400,6 +408,7 @@ contract OrderManager is IOrderManager {
         productIds[index] = productIds[productIds.length];
         productIds.pop();
     }
+
     function removeAdvert(uint256 id) private {
         uint256 index;
         for (uint256 i = 0; i < advertIds.length; i++) {

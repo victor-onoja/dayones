@@ -55,18 +55,6 @@ def _haversine_kernel(lat1, lng1, lat2, lng2):
     lng = lng2 - lng1
     d = (sin_lat2 + cos_lat1 * cos_lat2 * sin_lon2)
     
-    print(dlat)
-    print(dlon)
-
-    print(sin_lat)
-    print(sin_lon)
-    print(cos_lat1)
-    print(cos_lat2)
-    print(sin_lat2)
-    print(sin_lon2)
-
-    print(d)
-    print(sqrt(d))
     return ER * 2 * asin(sqrt(d))
 
 # Usage
