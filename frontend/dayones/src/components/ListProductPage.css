@@ -1,0 +1,168 @@
+.list-product-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-product-navbar {
+  background-color: #fff;
+  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list-product-navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #006400; /* Dark green */
+}
+
+.list-product-text {
+  color: #006400; /* Dark green */
+  font-weight: 600;
+}
+
+.list-product-main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.list-product-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.list-product-form {
+  max-width: 500px;
+  width: 100%;
+  padding: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid #006400; /* Dark green */
+  border-radius: 5px;
+  font-size: 16px;
+  color: #e6f3e6; /* Light green */
+  background-color: #006400; /* Dark green */
+}
+
+.form-group input::placeholder {
+  color: #e6f3e6; /* Light green */
+}
+
+.location-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #006400; /* Dark green */
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.btn-list-product {
+  width: 100%;
+  background-color: #006400; /* Dark green */
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .list-product-form {
+    padding: 20px;
+  }
+}

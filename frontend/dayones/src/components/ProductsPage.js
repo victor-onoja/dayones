@@ -4,11 +4,9 @@ import ProductsNavbar from "./ProductsNavbar";
 import OfferBanner from "./OfferBanner";
 import CategoryFilter from "./CategoryFilter";
 import ProductList from "./ProductList";
-// import ProductsFooter from "./ProductsFooter";
 
 const ProductsPage = () => {
   const [showMyProducts, setShowMyProducts] = useState(false);
-  // const [showFooter, setShowFooter] = useState(true);
 
   return (
     <div className="products-page">
@@ -25,7 +23,7 @@ const ProductsPage = () => {
                 />
                 <span className="slider round"></span>
               </label>
-              <span>{showMyProducts ? "My Products" : "All Products"}</span>
+              <span>{showMyProducts ? "My Products" : "Products"}</span>
             </div>
             <button className="btn-list-product">List Product</button>
           </div>
@@ -56,8 +54,6 @@ const ProductsPage = () => {
           </div>
         </section>
       </div>
-
-      {/* {showFooter && <ProductsFooter onDismiss={() => setShowFooter(false)} />} */}
     </div>
   );
 };

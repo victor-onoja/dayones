@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import "./CategoryFilter.css";
 import searchicon from "./search-icon.png";
-import filtericon from "./filter-icon.png";
 
 const CategoryFilter = () => {
   const [activeCategory, setActiveCategory] = useState(null);
-  const [showFilter, setShowFilter] = useState(false);
+  const [priceRange, setPriceRange] = useState(2.5);
 
   const categories = [
     "Electronics",
@@ -29,7 +28,6 @@ const CategoryFilter = () => {
               }
             >
               {category}
-              {/* <span className="dropdown-icon">▼</span> */}
               {activeCategory === index && (
                 <div className="category-dropdown">
                   <p>{category} dropdown</p>
@@ -44,18 +42,19 @@ const CategoryFilter = () => {
             <input type="text" placeholder="Search for product" />
           </div>
           <div className="filter-container">
-            <button
-              className="btn-filter"
-              onClick={() => setShowFilter(!showFilter)}
-            >
-              <img src={filtericon} alt="Filter" />
-              Filter by
-            </button>
-            {showFilter && (
-              <div className="filter-dropdown">
-                <p>Price</p>
-              </div>
-            )}
+            <label htmlFor="priceRange" className="price-label">
+              Price: {priceRange.toFixed(1)} Day1
+            </label>
+            <input
+              type="range"
+              id="priceRange"
+              className="price-slider"
+              min="0"
+              max="5"
+              step="0.1"
+              value={priceRange}
+              onChange={(e) => setPriceRange(parseFloat(e.target.value))}
+            />
           </div>
         </div>
       </div>
