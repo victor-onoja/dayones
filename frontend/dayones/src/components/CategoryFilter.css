@@ -1,0 +1,127 @@
+.category-filter {
+  background-color: #fff;
+  padding: 20px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 130px; /* Adjust based on navbar and product controls height */
+  z-index: 9;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.categories {
+  display: flex;
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.category {
+  background-color: #e6f3e6; /* Light green */
+  color: #006400; /* Dark green */
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin-right: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.category:hover {
+  background-color: #c8e6c9; /* Slightly darker light green */
+}
+
+.category.active {
+  background-color: #006400; /* Dark green */
+  color: #fff;
+}
+
+.dropdown-icon {
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+.category-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 10px;
+  min-width: 150px;
+  z-index: 10;
+}
+
+.search-filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-container {
+  flex: 1;
+  position: relative;
+  margin-right: 20px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 16px;
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.price-label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.price-slider {
+  width: 200px;
+}
+
+.price-slider::-webkit-slider-thumb {
+  background-color: darkgreen;
+  border-radius: 50%;
+}
+
+.price-slider::-moz-range-thumb {
+  background-color: darkgreen;
+  border-radius: 50%;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .search-filter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-container {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}

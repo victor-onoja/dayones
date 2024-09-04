@@ -8,7 +8,7 @@ const Navbar = () => {
       <div className="container navbar-content">
         <div className="logo">
           <img src={logo} alt="Dayones Logo" />
-          <span className="logo-text">dayones</span>
+          <span className="logo-text">DAYONES</span>
         </div>
         <ul className="nav-links">
           <li>
@@ -26,7 +26,7 @@ const Navbar = () => {
         </ul>
         <div className="auth-buttons">
           <button className="btn-login">Login</button>
-          <button className="btn-signup">Sign Up</button>
+          <button className="signup-btn">Signup</button>
         </div>
       </div>
     </nav>

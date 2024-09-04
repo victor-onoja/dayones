@@ -2,10 +2,16 @@
   background-color: #006400; /* Dark green */
   color: #fff;
   padding: 60px 0 30px;
+  position: relative;
 }
 
-.footer .container {
-  display: grid;
+.dismiss-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .newsletter {
