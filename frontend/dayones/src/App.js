@@ -12,6 +12,7 @@ import DeliveriesPage from "./components/DeliveriesPage";
 import AdvertsPage from "./components/AdvertsPage";
 import VerifyPage from "./components/VerifyPage";
 import CartPage from "./components/CartPage";
+import StartAdvertPage from "./components/StartAdvertPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/adverts" element={<AdvertsPage />} />
           <Route path="/verify" element={<VerifyPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/startadvert" element={<StartAdvertPage />} />
         </Routes>
       </div>
     </Router>

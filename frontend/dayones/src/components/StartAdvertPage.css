@@ -1,0 +1,139 @@
+.start-advert-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.start-advert-navbar {
+  background-color: #fff;
+  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.start-advert-navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #006400; /* Dark green */
+}
+
+.start-advert-text {
+  color: #006400; /* Dark green */
+  font-weight: 600;
+}
+
+.start-advert-main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  /* background-color: #006400; */
+}
+
+.start-advert-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.start-advert-image {
+  flex: 1;
+  max-width: 50%;
+}
+
+.start-advert-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.start-advert-form {
+  flex: 1;
+  max-width: 500px;
+  padding: 30px;
+  border-radius: 10px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #e6f3e6; /* Light green */
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid #00a000; /* Lighter green */
+  border-radius: 5px;
+  font-size: 16px;
+  color: #e6f3e6; /* Light green */
+  background-color: #006400; /* Dark green */
+}
+
+.form-group input::placeholder,
+.form-group select {
+  color: #a0d8a0; /* Light green for placeholder */
+}
+
+.btn-start-advert {
+  width: 100%;
+  background-color: #00a000; /* Lighter green */
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-start-advert:hover {
+  background-color: #008000; /* Slightly darker on hover */
+}
+
+@media (max-width: 768px) {
+  .start-advert-content {
+    flex-direction: column;
+  }
+
+  .start-advert-image,
+  .start-advert-form {
+    max-width: 100%;
+  }
+
+  .start-advert-image {
+    margin-bottom: 30px;
+  }
+}
