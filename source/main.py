@@ -1,27 +1,27 @@
-import re
-import os
+# import re
+# import os
 import uuid
 import time
-import json
-import asyncio
-from datetime import datetime
+# import json
+# import asyncio
+# from datetime import datetime
 from typing import Annotated
 
 from fastapi import FastAPI, Request, Response, Form, HTTPException, Body
-from fastapi.responses import HTMLResponse, FileResponse
+# from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+# from fastapi.staticfiles import StaticFiles
 from fastapi.params import Depends
 
 from . import database as db
 from . import encoder as enc
-from . import executor as exe
+# from . import executor as exe
 from contextlib import asynccontextmanager
 
 
-app = FastAPI(docs_url=None, redoc_url=None)
-app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
-app.mount("/dist", StaticFiles(directory="dist"), name="dist")
+app = FastAPI()
+# app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
+# app.mount("/dist", StaticFiles(directory="dist"), name="dist")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -30,7 +30,6 @@ app.add_middleware(
 )
 
 SIGNATURE_EXPIRY = 300  # 5 minutes in seconds
-DEVMODE = False # by default false
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -84,12 +83,16 @@ def logout_request(request: Request, session: db.Session = Depends(get_session))
         db.delete(session, admin_session[0])
         return "Logged Out"
     
-@app.get("/orders")
-def get_orders():
+@app.get("/cart")
+def get_cart():
     ...
 
-@app.get("/products")
-def get_products():
+@app.post("/cart")
+def add_cart():
+    ...
+
+@app.get("/advert")
+def get_advert():
     ...
 
 @app.post("/signup_request")

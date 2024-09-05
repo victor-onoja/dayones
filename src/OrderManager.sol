@@ -329,7 +329,6 @@ contract OrderManager is IOrderManager {
             order.status = OrderStatus.Delivered;
         }
         orders[id] = order;
-
         removeOrder(id);
     }
 
