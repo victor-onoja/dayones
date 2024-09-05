@@ -173,21 +173,21 @@ const ListProductPage = () => {
   };
 
   return (
-    <div className="list-product-page">
-      <nav className="list-product-navbar">
-        <div className="container">
-          <div className="logo">
-            <img src={logo} alt="Dayones Logo" />
-            <span className="logo-text">dayones</span>
+    <div className='list-product-page'>
+      <nav className='list-product-navbar'>
+        <div className='container'>
+          <div className='logo'>
+            <img src={logo} alt='Dayones Logo' />
+            <span className='logo-text'>dayones</span>
           </div>
-          <span className="list-product-text">List Product</span>
+          <span className='list-product-text'>List Product</span>
         </div>
       </nav>
 
-      <main className="list-product-main">
-        <div className="container list-product-content">
-          <div className="signup-image">
-            <img src={boy} alt="Signup" />
+      <main className='list-product-main'>
+        <div className='container list-product-content'>
+          <div className='signup-image'>
+            <img src={boy} alt='Signup' className='rounded-3xl' />
           </div>
           <div className="list-product-form">
             <form onSubmit={handleListProduct}>
@@ -226,25 +226,25 @@ const ListProductPage = () => {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="location" className="location-label">
+              <div className='form-group'>
+                <label htmlFor='location' className='location-label'>
                   Turn on Location *
-                  <div className="toggle-switch">
+                  <div className='toggle-switch'>
                     <input
-                      type="checkbox"
-                      id="location"
+                      type='checkbox'
+                      id='location'
                       checked={!isLocationEnabled}
                       onChange={() => setIsLocationEnabled(!isLocationEnabled)}
                     />
-                    <span className="slider round"></span>
+                    <span className='slider round'></span>
                   </div>
                 </label>
                 {isLocationEnabled && (
-                  <div className="input-wrapper">
+                  <div className='input-wrapper'>
                     <img
                       src={locationIcon}
-                      alt="Location"
-                      className="input-icon"
+                      alt='Location'
+                      className='input-icon'
                     />
                     <input
                       type="text"
@@ -264,10 +264,10 @@ const ListProductPage = () => {
                 )}
               </div>
 
-              <div className="form-group">
-                <label htmlFor="quantity">Quantity *</label>
-                <div className="input-wrapper">
-                  <img src={qtyIcon} alt="Quantity" className="input-icon" />
+              <div className='form-group'>
+                <label htmlFor='quantity'>Quantity *</label>
+                <div className='input-wrapper'>
+                  <img src={qtyIcon} alt='Quantity' className='input-icon' />
                   <input
                     type="number"
                     id="quantity"
@@ -280,10 +280,10 @@ const ListProductPage = () => {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="productUri">Product URI *</label>
-                <div className="input-wrapper">
-                  <img src={linkIcon} alt="URI" className="input-icon" />
+              <div className='form-group'>
+                <label htmlFor='productUri'>Product URI *</label>
+                <div className='input-wrapper'>
+                  <img src={linkIcon} alt='URI' className='input-icon' />
                   <input
                     type="url"
                     id="productUri"
@@ -295,17 +295,17 @@ const ListProductPage = () => {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="advert" className="location-label">
+              <div className='form-group'>
+                <label htmlFor='advert' className='location-label'>
                   Enable Advert-
-                  <div className="toggle-switch">
+                  <div className='toggle-switch'>
                     <input
-                      type="checkbox"
-                      id="advert"
+                      type='checkbox'
+                      id='advert'
                       checked={!isAdvertEnabled}
                       onChange={() => setIsAdvertEnabled(!isAdvertEnabled)}
                     />
-                    <span className="slider round"></span>
+                    <span className='slider round'></span>
                   </div>
                 </label>
               </div>

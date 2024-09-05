@@ -31,11 +31,6 @@ const ProductsSection = () => {
           </div>
           <div className='product-item reverse'>
             <img src={product3} alt='Product 3' />
-            <h3>Secure transactions</h3>
-            <p>
-              Experience safe and transparent transactions powered by blockchain
-              technology
-            </p>
             <button className='btn-secondary'>
               Learn More <span className='arrow'>→</span>
             </button>
@@ -46,31 +41,6 @@ const ProductsSection = () => {
             <h3>Seamless Deliveries</h3>
           </div>
         </div>
-        {/* <div className='powered-by'>
-          <h4>Powered by:</h4>
-          <div className="partner-logos">
-            <div className="partner">
-              <img src={liskicon} alt="lisk Logo" />
-              <span>Lisk</span>
-            </div>
-            <div className="partner">
-              <img src={web3bridgeicon} alt="web3 bridge Logo" />
-              <span>Web3 Bridge</span>
-            </div>
-            <div className="partner">
-              <img src={web3lagosicon} alt="web3 lagos Logo" />
-              <span>Web3 Lagos</span>
-            </div>
-            <div className="partner">
-              <img src={web3jsicon} alt="web3js Logo" />
-              <span>Web3JS</span>
-            </div>
-            <div className="partner">
-              <img src={zksyncicon} alt="zksync Logo" />
-              <span>zkSync</span>
-            </div>
-          </div>
-        </div> */}
       </div>
     </section>
   );

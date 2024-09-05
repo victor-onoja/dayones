@@ -4,28 +4,35 @@ import ProductsNavbar from "./ProductsNavbar";
 import OfferBanner from "./OfferBanner";
 import CategoryFilter from "./CategoryFilter";
 import ProductList from "./ProductList";
+import { useNavigate } from "react-router-dom";
 
 const ProductsPage = () => {
+  const navigate = useNavigate()
   const [showMyProducts, setShowMyProducts] = useState(false);
 
   return (
-    <div className="products-page">
+    <div className='products-page'>
       <ProductsNavbar />
-      <div className="products-content">
-        <section className="product-controls">
-          <div className="container">
-            <div className="toggle-container">
-              <label className="switch">
+      <div className='products-content'>
+        <section className='product-controls'>
+          <div className='container'>
+            <div className='toggle-container'>
+              <label className='switch'>
                 <input
-                  type="checkbox"
+                  type='checkbox'
                   checked={showMyProducts}
                   onChange={() => setShowMyProducts(!showMyProducts)}
                 />
-                <span className="slider round"></span>
+                <span className='slider round'></span>
               </label>
-              <span>{showMyProducts ? "My Products" : "Products"}</span>
+              <span>{showMyProducts ? 'My Products' : 'Products'}</span>
             </div>
-            <button className="btn-list-product">List Product</button>
+            <button
+              className='btn-list-product'
+              onClick={() => navigate('/listproducts')}
+            >
+              List Product
+            </button>
           </div>
         </section>
 
@@ -35,15 +42,15 @@ const ProductsPage = () => {
 
         {!showMyProducts && (
           <>
-            <section className="featured-products">
-              <div className="container">
+            <section className='featured-products'>
+              <div className='container'>
                 <h2>Shop your favorite products</h2>
                 <ProductList horizontal />
               </div>
             </section>
 
-            <section className="interested-products">
-              <div className="container">
+            <section className='interested-products'>
+              <div className='container'>
                 <h2>You might also be interested in</h2>
                 <ProductList horizontal />
               </div>
@@ -51,9 +58,9 @@ const ProductsPage = () => {
           </>
         )}
 
-        <section className="all-products">
-          <div className="container">
-            <h2>{showMyProducts ? "My Products" : "All Products"}</h2>
+        <section className='all-products'>
+          <div className='container'>
+            <h2>{showMyProducts ? 'My Products' : 'All Products'}</h2>
             <ProductList myProducts={showMyProducts} />
           </div>
         </section>

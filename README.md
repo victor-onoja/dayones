@@ -1,112 +1,120 @@
 
 > # Dayones
 
-## Table of Contents
+> ## Table of Contents
 
-Introduction
-Features
-Tech Stack
-Installation
-Usage
-Challenges
-Future Improvements
-Contributors
-License
+1. Introduction
+2. Features
+3. Tech Stack
+4. Installation
+5. Usage
+6. Challenges
+7. Future Improvements
+8. Contributors
 
-## Introduction
+> ## Introduction
 
-What is Project Name?
-A brief description of your project. Explain what it does, the problem it solves, and why it's important. Mention the hackathon theme if applicable.
+Dayones is an e-commerce platform that uses Blockchain technology to provide consumers with a secure, transparent, and reliable online shopping experience.
 
-Example: Project Name is a decentralized application that allows users to [describe key functionality]. This project was built during [Hackathon Name] to address [problem statement or theme].
-
-Inspiration
-Explain what inspired your team to work on this project. What problem or challenge were you trying to solve?
-
-Features
-Highlight the main features of your project. You can list them out or use bullet points.
-
-Feature 1: Describe what it does and how it benefits the user.
-Feature 2: Describe another key feature.
-Feature 3: Continue listing features.
-
-Tech Stack
-Mention the technologies, frameworks, and tools you used to build the project.
-
-Frontend: e.g., React, Angular, Vue.js
-Backend: e.g., Node.js, Python, Solidity
-Smart Contracts: e.g., Solidity, Vyper
-APIs: e.g., Web3.js, Ethers.js
-Database: e.g., MongoDB, Firebase
-Other Tools: e.g., Truffle, Hardhat, IPFS
+By acting as a tamper-proof middleman, Dayones ensures transactions are safe from fraud and manipulation, offering buyers and sellers a trustworthy environment free from interference or system abuse.
 
 
-# video link
+### Inspiration
+
+The idea for this project came when I was trying to buy a router from a vendor on Twitter but wasn’t sure if I could trust him to deliver a quality product or even deliver it at all.
+
+That experience got me thinking about how technology could solve this trust issue, and that’s how the project was born.
 
 
-# pitch deck link
+> ## Features
+
+Feature 1: it enables Vendors to list products and pay for targeted ads.
+
+Feature 2: it enables buyers to buy products.
+
+Feature 3: it enables both buyers and sellers to track the product delivery lifecycle.
+
+Feature 4: it enables people earn commisions for delivering products
+
+> ## Tech Stack
+
+The Technology stack of this project includes but is not limited to
+
+Frontend: React
+Backend: Fastapi
+Smart Contracts: solidity
+APIs: e.g., Web3.js
+
+### video link
 
 
-Installation
-Provide step-by-step instructions on how to set up the project locally.
+### pitch deck link
 
-bash
-Copy code
-# Clone the repository
-git clone https://github.com/yourusername/yourproject.git
+[Presentation Slides](https://github.com/dashingfon/dayones/blob/master/Dayones%20Presentation.pptx)
 
-# Navigate to the project directory
-cd yourproject
 
-# Install dependencies
-npm install
+> ## Installation
 
-# (Optional) Set up environment variables
-cp .env.example .env
-# Update .env with appropriate values
+to install this project first clone the repository
 
-# Run the application
+### clone the repository
+
+```bash
+git clone https://github.com/dashingfon/dayones.git
+```
+
+### Navigate to the project directory
+
+```bash
+cd dayones
+```
+
+### build the contracts
+
+```bash
+forge build
+```
+
+### setup the frontend repository
+
+```bash
+
+```
+
+### Run the application
+
+```bash
 npm start
-Prerequisites
+```
 
-List any prerequisites required to run the project.
+## Project Prerequisites
 
-Node.js: Version X.X.X
-npm: Version X.X.X
-Other tools: Mention any other tools needed
-Usage
-Explain how to use the application. You can include screenshots or GIFs to make it more understandable.
-
-bash
-Copy code
-
-# Example of how to run a specific function or command
-Step 1: Do this first.
-Step 2: Then do this.
-Step 3: Finally, do this.
-Demo
-If possible, provide a live demo link or instructions on how to run the demo locally.
+Node.js
+npm
+Foundry
 
 
-Challenges
+> ## Challenges
 
-Discuss any challenges you faced during development and how you overcame them. This could include technical difficulties, time constraints, or learning new technologies.
+One of the challenges we faced during this project was implementing the Haversine formula, as Solidity lacks support for many trigonometric functions.
 
-Future Improvements
+We used the Haversine formula to automatically calculate delivery costs based on the distance between the buyer and seller. Despite the limitations, we successfully developed a functional version of the formula entirely on the blockchain.
 
-Outline any features or improvements you would add if you had more time or resources.
 
-Improvement 1: Describe a potential enhancement.
-Improvement 2: Describe another area for future development.
+> ## Future Improvements
 
-Contributors
-List the team members who contributed to the project. Include their roles and, if possible, links to their GitHub profiles.
+The following areas are wher we plan to improve on in the future
 
-Name 1 - Role - GitHub Profile
-Name 2 - Role - GitHub Profile
-Name 3 - Role - GitHub Profile
+1. Simplifying Conflict Resolution: Streamline and clarify the process for resolving disputes between buyers and sellers.
+2. Using AI for Better Ad Targeting: Leverage AI to analyze buying patterns, recent activities, and more for improved ad targeting.
+3. Comprehensive Product Delivery Tracking: Fully implement a map feature to track the entire product delivery lifecycle.
 
-License
-Specify the license under which your project is distributed.
 
-Example: This project is licensed under the MIT License - see the LICENSE file for details.
+> ## Meet The Dayones
+
+Mfon Nwa – Backend Engineer
+Victor Odoh – Frontend Engineer
+Ayomide Ashiru – Frontend Developer
+Udeme Nwa – UI/UX Designer
+Kene Etta – Project & Content Strategist
+
