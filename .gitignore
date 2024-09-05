@@ -18,5 +18,6 @@ docs/
 workspace.bat
 .secret
 data/
+node_modules/
 
 frontend/dayones/node_modules/
