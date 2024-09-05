@@ -149,13 +149,36 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
-/* .orders-table {
-  margin-top: 0px;
-} */
-
 table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.status-input {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.status-input input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+  width: 120px;
+}
+
+.status-input button {
+  background-color: #006400;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.status-input button:hover {
+  background-color: #004d00;
 }
 
 th,

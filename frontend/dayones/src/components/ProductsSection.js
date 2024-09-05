@@ -12,27 +12,32 @@ import zksyncicon from "./zksync-icon.png";
 
 const ProductsSection = () => {
   return (
-    <section className="products-section">
-      <div className="container">
-        <div className="product-grid">
-          <div className="product-item">
-            <img src={product1} alt="Product 1" />
+    <section className='products-section'>
+      <div className='container'>
+        <div className='product-grid'>
+          <div className='product-item'>
+            <img src={product1} alt='Product 1' />
             <h3>Smooth shopping experience</h3>
             <p>
               Shop for your everyday products while enjoying the benefits and
               security of web3.
             </p>
-            <button className="btn-secondary">
-              Get Started <span className="arrow">→</span>
+            <button className='btn-secondary'>
+              Get Started <span className='arrow'>→</span>
             </button>
           </div>
-          <div className="product-item center-image">
-            <img src={product2} alt="Product 2" />
+          <div className='product-item center-image'>
+            <img src={product2} alt='Product 2' className='rounded-3xl' />
           </div>
-          <div className="product-item reverse">
-            <img src={product3} alt="Product 3" />
-            <button className="btn-secondary">
-              Learn More <span className="arrow">→</span>
+          <div className='product-item reverse'>
+            <img src={product3} alt='Product 3' />
+            <h3>Secure transactions</h3>
+            <p>
+              Experience safe and transparent transactions powered by blockchain
+              technology
+            </p>
+            <button className='btn-secondary'>
+              Learn More <span className='arrow'>→</span>
             </button>
             <p>
               Get fast and affordable delivery with real-time product tracking
@@ -41,7 +46,7 @@ const ProductsSection = () => {
             <h3>Seamless Deliveries</h3>
           </div>
         </div>
-        <div className="powered-by">
+        {/* <div className='powered-by'>
           <h4>Powered by:</h4>
           <div className="partner-logos">
             <div className="partner">
@@ -64,9 +69,8 @@ const ProductsSection = () => {
               <img src={zksyncicon} alt="zksync Logo" />
               <span>zkSync</span>
             </div>
-            {/* Add more partner logos here */}
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

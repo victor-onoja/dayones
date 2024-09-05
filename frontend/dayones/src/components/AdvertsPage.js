@@ -74,7 +74,7 @@ const AdvertsPage = () => {
               <span>{showMyAdverts ? "My Adverts" : "Adverts"}</span>
             </div>
             <div className="advert-actions">
-              <button className="btn-verify">Verify</button>
+              <button className="btn-ver">Verify</button>
               <label className="switch">
                 <input
                   type="checkbox"
