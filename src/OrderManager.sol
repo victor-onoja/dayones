@@ -161,7 +161,7 @@ contract OrderManager is IOrderManager {
 
     function faucet(address reciever, uint256 value) external {
         require(msg.sender == advertJury, "only jury can call");
-        token.mint(reciever, value);
+        token.transfer(reciever, value);
     }
 
     // function isVerified(address user) external view returns (bool) {
