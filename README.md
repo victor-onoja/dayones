@@ -14,15 +14,16 @@
 
 > ## Introduction
 
-Dayones is an e-commerce platform leveraging Blockchain technology to ensure a secure, transparent, and trustworthy online shopping experience for consumers. 
+Dayones is an e-commerce platform that uses Blockchain technology to provide consumers with a secure, transparent, and reliable online shopping experience.
 
-This platform is designed to eliminate the fear of fraud by serving as an incorruptible & immutable middleman, immune to any factor that may try to game or override the system.
+By acting as a tamper-proof middleman, Dayones ensures transactions are safe from fraud and manipulation, offering buyers and sellers a trustworthy environment free from interference or system abuse.
 
 
 ### Inspiration
-the inspiration for this project came when i was trying to buy a router online from a vendor on twitter and didnt know if i could trust him a deliver a good product or even deliver at all.
 
-I began thinking of ways to solve the problem with technology and the idea for the project was born.
+The idea for this project came when I was trying to buy a router from a vendor on Twitter but wasn’t sure if I could trust him to deliver a quality product or even deliver it at all.
+
+That experience got me thinking about how technology could solve this trust issue, and that’s how the project was born.
 
 
 > ## Features
@@ -95,15 +96,19 @@ Foundry
 
 > ## Challenges
 
-Discuss any challenges you faced during development and how you overcame them. This could include technical difficulties, time constraints, or learning new technologies.
+One of the challenges we faced during this project was implementing the Haversine formula, as Solidity lacks support for many trigonometric functions.
+
+We used the Haversine formula to automatically calculate delivery costs based on the distance between the buyer and seller. Despite the limitations, we successfully developed a functional version of the formula entirely on the blockchain.
 
 
 > ## Future Improvements
 
-Outline any features or improvements you would add if you had more time or resources.
+The following areas are wher we plan to improve on in the future
 
-Improvement 1: Describe a potential enhancement.
-Improvement 2: Describe another area for future development.
+1. Simplifying Conflict Resolution: Streamline and clarify the process for resolving disputes between buyers and sellers.
+2. Using AI for Better Ad Targeting: Leverage AI to analyze buying patterns, recent activities, and more for improved ad targeting.
+3. Comprehensive Product Delivery Tracking: Fully implement a map feature to track the entire product delivery lifecycle.
+
 
 > ## Meet The Dayones
 
