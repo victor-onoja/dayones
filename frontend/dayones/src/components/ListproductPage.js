@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import DAY1_ABI from "../constants/abi";
+import CONTRACT_ADDRESS from "../constants/contract-address";
 import "./ListProductPage.css";
 import logo from "./logo.png";
 import boy from "./boy.png";
@@ -9,6 +10,8 @@ import priceIcon from "./price-icon.png";
 import locationIcon from "./location-icon.png";
 import qtyIcon from "./qty-icon.png";
 import linkIcon from "./link-icon.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ListProductPage = () => {
   const [web3, setWeb3] = useState(null);
@@ -27,9 +30,9 @@ const ListProductPage = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [contractAddress, setContractAddress] = useState(
-    "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  );
+  // const [contractAddress, setContractAddress] = useState(
+  //   "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+  // );
   const [networkId, setNetworkId] = useState(null);
 
   useEffect(() => {
@@ -43,7 +46,7 @@ const ListProductPage = () => {
           const accounts = await web3Instance.eth.getAccounts();
           setAccount(accounts[0]);
           const actualABI = DAY1_ABI[0].abi;
-          console.log("Actual ABI:", actualABI);
+          // console.log("Actual ABI:", actualABI);
 
           if (!Array.isArray(actualABI) || actualABI.length === 0) {
             throw new Error("ABI is not properly defined or imported");
@@ -54,12 +57,13 @@ const ListProductPage = () => {
 
           if (netId !== 31337) {
             setError("Please connect to your local network in MetaMask");
+            toast.warning("Please connect to your local network in MetaMask");
             return;
           }
 
           const contractInstance = new web3Instance.eth.Contract(
             actualABI,
-            contractAddress
+            CONTRACT_ADDRESS
           );
           if (!contractInstance || !contractInstance.methods) {
             throw new Error(
@@ -67,25 +71,27 @@ const ListProductPage = () => {
             );
           }
           setContract(contractInstance);
-          console.log("Contract Instance:", contractInstance);
-          console.log(
-            "Available contract methods:",
-            Object.keys(contractInstance.methods)
-          );
+          // console.log("Contract Instance:", contractInstance);
+          // console.log(
+          //   "Available contract methods:",
+          //   Object.keys(contractInstance.methods)
+          // );
 
           // Test the listProduct method
-          if (contractInstance.methods.listProduct) {
-            console.log("listProduct method exists");
-          } else {
-            console.log("listProduct method does not exist");
-          }
+          // if (contractInstance.methods.listProduct) {
+          //   console.log("listProduct method exists");
+          // } else {
+          //   console.log("listProduct method does not exist");
+          // }
         } catch (error) {
           console.error("Initialization error:", error);
+          toast(`oops something went wrong: ${error}`);
         }
       } else {
         console.error(
           "Non-Ethereum browser detected. Please install MetaMask!"
         );
+        toast.error("Non-Ethereum browser detected. Please install MetaMask!");
       }
     };
 
@@ -103,7 +109,7 @@ const ListProductPage = () => {
         window.ethereum.removeListener("networkChanged", setNetworkId);
       }
     };
-  }, [contractAddress]);
+  }, []);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -322,6 +328,7 @@ const ListProductPage = () => {
           </div>
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 };
