@@ -9,6 +9,7 @@ contract DayOnesToken is ERC20 {
 
     constructor() ERC20("DayOnesToken", "DAY1") {
         owner = msg.sender;
+        _mint(owner, 1000000 ether);
     }
 
     function mint(address account, uint256 amount) external {

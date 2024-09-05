@@ -42,10 +42,10 @@ contract OrderManager is IOrderManager {
 
     IERC20 private token;
 
-    constructor(address _advertJury) {
+    constructor() {
         token = IERC20(address(new DayOnesToken()));
         deliveryFeePerKM = 400;
-        advertJury = _advertJury;
+        advertJury = msg.sender;
     }
 
     // View functions
@@ -153,6 +153,15 @@ contract OrderManager is IOrderManager {
         } else {
             return 0;
         }
+    }
+
+    function getToken() external view returns (address) {
+        return address(token);
+    }
+
+    function faucet(address reciever, uint256 value) external {
+        require(msg.sender == advertJury, "only jury can call");
+        token.mint(reciever, value);
     }
 
     // function isVerified(address user) external view returns (bool) {
