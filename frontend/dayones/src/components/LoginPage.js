@@ -22,10 +22,10 @@ const LoginPage = () => {
       <main className='login-main' style={{ height: 'calc(100vh - 66px)' }}>
         <div className='container login-content'>
           <div className='login-image'>
-            <img src={boy} alt='Smiling youth' />
+            <img src={boy} alt='Smiling youth' className='rounded-3xl' />
           </div>
           <div className='login-form  flex flex-col'>
-            <div className="flex-grow">
+            <div className='flex-grow'>
               <h1 className='text-green-800 text-3xl font-extrabold mb-12'>
                 Welcome back!
               </h1>
