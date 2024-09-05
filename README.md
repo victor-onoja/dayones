@@ -52,6 +52,12 @@ APIs: e.g., Web3.js
 
 [Presentation Slides](https://github.com/dashingfon/dayones/blob/master/Dayones%20Presentation.pptx)
 
+### deployment contract address
+
+OrderManager: 0x4278c5d322ab92f1d876dd7bd9b44d1748b88af2
+
+note: the other deployment addresses are in the broadcast directory
+
 
 > ## Installation
 
