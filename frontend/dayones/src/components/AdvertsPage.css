@@ -97,12 +97,14 @@ input:checked + .slider:before {
   margin-top: 90px;
 }
 
-.advert-feeds h2 {
+.advert-feeds h2,
+.my-adverts h2 {
   color: #006400;
   margin-bottom: 20px;
 }
 
-.advert-feeds .container {
+.advert-feeds .container,
+.my-adverts .container {
   display: grid;
 }
 
@@ -221,6 +223,57 @@ input:checked + .slider:before {
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.adverts-content {
+  min-height: calc(100vh - 60px);
+  padding: 30px 0;
+}
+
+.my-adverts {
+  margin-top: 30px;
+}
+
+.my-adverts-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #008000;
+  color: #e6f3e6;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.my-adverts-table th,
+.my-adverts-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #00a000;
+}
+
+.my-adverts-table th {
+  background-color: #007200;
+  font-weight: bold;
+}
+
+.my-adverts-table tr:last-child td {
+  border-bottom: none;
+}
+
+.btn-start-campaign {
+  background-color: #00a000;
+  color: #e6f3e6;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-start-campaign svg {
+  margin-right: 5px;
 }
 
 @media (max-width: 768px) {

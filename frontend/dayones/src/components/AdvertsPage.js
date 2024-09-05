@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import "./AdvertsPage.css";
 import ProductsNavbar from "./ProductsNavbar";
-import { ShoppingCart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ShoppingCart, Play } from "lucide-react";
 
 const AdvertsPage = () => {
   const [showMyAdverts, setShowMyAdverts] = useState(false);
@@ -17,6 +16,7 @@ const AdvertsPage = () => {
       title: "Smartphone",
       price: 5.99,
       category: "Electronics",
+      impressions: 1,
     },
     {
       id: 2,
@@ -25,6 +25,7 @@ const AdvertsPage = () => {
       title: "Laptop",
       price: 9.99,
       category: "Electronics",
+      impressions: 3,
     },
     {
       id: 3,
@@ -33,6 +34,7 @@ const AdvertsPage = () => {
       title: "Headphones",
       price: 1.99,
       category: "Electronics",
+      impressions: 1.1,
     },
     {
       id: 4,
@@ -41,6 +43,7 @@ const AdvertsPage = () => {
       title: "Smartwatch",
       price: 2.99,
       category: "Electronics",
+      impressions: 0.1,
     },
   ];
 
@@ -56,6 +59,11 @@ const AdvertsPage = () => {
   const handleWithdraw = () => {
     // Implement withdrawal logic here
     console.log("Withdrawing earnings...");
+  };
+
+  const handleStartCampaign = (id) => {
+    // Implement start campaign logic here
+    console.log(`Starting campaign for advert ${id}...`);
   };
 
   return (
@@ -91,75 +99,111 @@ const AdvertsPage = () => {
             </div>
           </div>
         </section>
+        {!showMyAdverts ? (
+          <>
+            <section className="advert-feeds">
+              <div className="container">
+                <h2>Your Feeds</h2>
+                <div className="advert-list">
+                  {adverts.map((advert) => (
+                    <div key={advert.id} className="advert-card">
+                      <img src={advert.image} alt={advert.title} />
+                      <h3>{advert.title}</h3>
+                      <p className="advert-category">{advert.category}</p>
+                      <p className="advert-price">
+                        {advert.price.toFixed(2)} DAY1
+                      </p>
+                      <button className="btn-add-to-cart">
+                        <ShoppingCart size={16} />
+                        Add to Cart
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-        <section className='advert-feeds'>
-          <div className='container'>
-            <h2>Your Feeds</h2>
-            <div className='advert-list'>
-              {adverts.map((advert) => (
-                <div key={advert.id} className='advert-card'>
-                  <img src={advert.image} alt={advert.title} />
-                  <h3>{advert.title}</h3>
-                  <p className='advert-category'>{advert.category}</p>
-                  <p className='advert-price'>{advert.price.toFixed(2)} DAY1</p>
-                  <button className='btn-add-to-cart'>
-                    <ShoppingCart size={16} />
-                    Add to Cart
+            <section className="earnings">
+              <div className="container">
+                <h2>Your Earnings</h2>
+                <div className="earnings-info">
+                  <div className="earnings-amount">
+                    <h3>{earnings[earningsTimeframe].toFixed(2)} DAY1</h3>
+                    <span>this {earningsTimeframe}</span>
+                  </div>
+                  <div className="earnings-timeframe">
+                    <button
+                      className={`btn-timeframe ${
+                        earningsTimeframe === "month" ? "active" : ""
+                      }`}
+                      onClick={() => setEarningsTimeframe("month")}
+                    >
+                      Month
+                    </button>
+                    <button
+                      className={`btn-timeframe ${
+                        earningsTimeframe === "week" ? "active" : ""
+                      }`}
+                      onClick={() => setEarningsTimeframe("week")}
+                    >
+                      Week
+                    </button>
+                    <button
+                      className={`btn-timeframe ${
+                        earningsTimeframe === "year" ? "active" : ""
+                      }`}
+                      onClick={() => setEarningsTimeframe("year")}
+                    >
+                      Year
+                    </button>
+                    <button
+                      className={`btn-timeframe ${
+                        earningsTimeframe === "total" ? "active" : ""
+                      }`}
+                      onClick={() => setEarningsTimeframe("total")}
+                    >
+                      All Time
+                    </button>
+                  </div>
+                  <button className="btn-withdraw" onClick={handleWithdraw}>
+                    Withdraw
                   </button>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className='earnings'>
-          <div className='container'>
-            <h2>Your Earnings</h2>
-            <div className='earnings-info'>
-              <div className='earnings-amount'>
-                <h3>{earnings[earningsTimeframe].toFixed(2)} DAY1</h3>
-                <span>this {earningsTimeframe}</span>
               </div>
-              <div className='earnings-timeframe'>
-                <button
-                  className={`btn-timeframe ${
-                    earningsTimeframe === 'month' ? 'active' : ''
-                  }`}
-                  onClick={() => setEarningsTimeframe('month')}
-                >
-                  Month
-                </button>
-                <button
-                  className={`btn-timeframe ${
-                    earningsTimeframe === 'week' ? 'active' : ''
-                  }`}
-                  onClick={() => setEarningsTimeframe('week')}
-                >
-                  Week
-                </button>
-                <button
-                  className={`btn-timeframe ${
-                    earningsTimeframe === 'year' ? 'active' : ''
-                  }`}
-                  onClick={() => setEarningsTimeframe('year')}
-                >
-                  Year
-                </button>
-                <button
-                  className={`btn-timeframe ${
-                    earningsTimeframe === 'total' ? 'active' : ''
-                  }`}
-                  onClick={() => setEarningsTimeframe('total')}
-                >
-                  All Time
-                </button>
-              </div>
-              <button className='btn-withdraw' onClick={handleWithdraw}>
-                Withdraw
-              </button>
+            </section>
+          </>
+        ) : (
+          <section className="my-adverts">
+            <div className="container">
+              <table className="my-adverts-table">
+                <thead>
+                  <tr>
+                    <th>Product Name</th>
+                    <th>Impressions</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adverts.map((advert) => (
+                    <tr key={advert.id}>
+                      <td>{advert.title}</td>
+                      <td>{advert.impressions}K</td>
+                      <td>
+                        <button
+                          className="btn-start-campaign"
+                          onClick={() => handleStartCampaign(advert.id)}
+                        >
+                          <Play size={16} />
+                          Start
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </div>
     </div>
   );

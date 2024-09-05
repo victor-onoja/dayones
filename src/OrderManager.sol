@@ -42,10 +42,10 @@ contract OrderManager is IOrderManager {
 
     IERC20 private token;
 
-    constructor(address _advertJury) {
+    constructor() {
         token = IERC20(address(new DayOnesToken()));
         deliveryFeePerKM = 400;
-        advertJury = _advertJury;
+        advertJury = msg.sender;
     }
 
     // View functions
@@ -155,9 +155,18 @@ contract OrderManager is IOrderManager {
         }
     }
 
-    function isVerified(address user) external view returns (bool) {
-        return verifiedusers[user];
+    function getToken() external view returns (address) {
+        return address(token);
     }
+
+    function faucet(address reciever, uint256 value) external {
+        require(msg.sender == advertJury, "only jury can call");
+        token.transfer(reciever, value);
+    }
+
+    // function isVerified(address user) external view returns (bool) {
+    //     return verifiedusers[user];
+    // }
 
     function verifyUser(address user) external {
         require(user == advertJury, "only jury can call");
@@ -203,6 +212,7 @@ contract OrderManager is IOrderManager {
         // must be the person that listed it
         Product memory product = products[id];
         require(product.vendor == msg.sender, "only vendor can unlist product");
+        require(product.price > 0, "unlisted product");
         removeProduct(id);
         delete products[id];
     }
@@ -231,35 +241,44 @@ contract OrderManager is IOrderManager {
         order.carrier = carrier;
     }
 
-    function buyProducts(OrderRequest memory _order, int256 lat, int256 long) external {
+    function buyProducts(OrderRequest[] memory _order, int256 lat, int256 long) external {
         // cannot be a vendor
-        Product memory product = products[_order.id];
-        require(product.vendor != msg.sender, "cannot buy your own product");
-        require(product.quantity > _order.quantity, "product sold out");
+        uint256 totalAmount;
+        for (uint256 i = 0; i < _order.length; i++) {
+            OrderRequest memory orderRequest = _order[i];
+            Product memory product = products[orderRequest.id];
 
-        OrderRequest[] memory requests = new OrderRequest[](1);
-        requests[0] = _order;
-        (uint256 amount, uint256 delivery, uint256 distance) = quoteOrders(requests, lat, long);
-        uint256 total = amount + delivery;
-        token.safeTransferFrom(msg.sender, address(this), total);
-        Order memory order = Order({
-            product: product,
-            status: OrderStatus.Bought,
-            carrier: address(0),
-            buyer: msg.sender,
-            quantity: _order.quantity,
-            deliveryFee: delivery,
-            price: amount,
-            timestamp: block.timestamp,
-            deliveryTimestamp: block.timestamp + (distance * EXPECTEDTIMEPERKM),
-            carrierDelivered: false,
-            buyerRecieved: false
-        });
-        product.quantity -= 1;
-        orders[orderId] = order;
-        orderIds.push(orderId);
-        orderId += 1;
-        // assign all the state accordingly
+            require(product.price > 0, "product not listed yet");
+            require(product.vendor != msg.sender, "cannot buy your own product");
+            require(product.quantity > orderRequest.quantity, "product cannot fill order");
+
+            OrderRequest[] memory singleOrder = new OrderRequest[](1);
+            singleOrder[0] = orderRequest;
+            (uint256 amount, uint256 delivery, uint256 distance) = quoteOrders(singleOrder, lat, long);
+            totalAmount += amount + delivery;
+
+            Order memory order = Order({
+                product: product,
+                status: OrderStatus.Bought,
+                carrier: address(0),
+                buyer: msg.sender,
+                quantity: orderRequest.quantity,
+                deliveryFee: delivery,
+                price: amount,
+                timestamp: block.timestamp,
+                deliveryTimestamp: block.timestamp + (distance * EXPECTEDTIMEPERKM),
+                carrierDelivered: false,
+                buyerRecieved: false
+            });
+            product.quantity -= 1;
+            products[orderRequest.id] = product;
+
+            orders[orderId] = order;
+            orderIds.push(orderId);
+            orderId += 1;
+        }
+
+        token.safeTransferFrom(msg.sender, address(this), totalAmount);
     }
 
     function cancelOrder(uint256 id) external {
@@ -284,7 +303,7 @@ contract OrderManager is IOrderManager {
         if (refundable) {
             order.status = OrderStatus.Cancelled;
             // refund the user
-            token.safeTransfer(order.buyer, order.price);
+            token.safeTransfer(order.buyer, order.price + order.deliveryFee);
         }
         removeOrder(id);
     }
@@ -319,7 +338,6 @@ contract OrderManager is IOrderManager {
             order.status = OrderStatus.Delivered;
         }
         orders[id] = order;
-
         removeOrder(id);
     }
 
