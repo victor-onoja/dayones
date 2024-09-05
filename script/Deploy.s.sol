@@ -6,8 +6,7 @@ import "../src/OrderManager.sol";
 
 contract Deploy is Script {
     function run() public {
-        string memory seedPhrase = vm.readFile(".secret");
-        uint256 privateKey = vm.deriveKey(seedPhrase, 0);
+        uint256 privateKey = vm.envUint("PV");
         vm.startBroadcast(privateKey);
         OrderManager orderManager = new OrderManager(vm.addr(privateKey));
         vm.stopBroadcast();
