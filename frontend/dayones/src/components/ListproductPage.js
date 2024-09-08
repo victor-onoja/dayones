@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
-import Web3 from "web3";
+import React, { useState } from "react";
+import { useAccount, useWriteContract } from "wagmi";
+import { parseEther } from "ethers";
 import DAY1_ABI from "../constants/abi";
+import CONTRACT_ADDRESS from "../constants/contract-address";
 import "./ListProductPage.css";
 import logo from "./logo.png";
 import boy from "./boy.png";
@@ -9,11 +11,12 @@ import priceIcon from "./price-icon.png";
 import locationIcon from "./location-icon.png";
 import qtyIcon from "./qty-icon.png";
 import linkIcon from "./link-icon.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ListProductPage = () => {
-  const [web3, setWeb3] = useState(null);
-  const [account, setAccount] = useState(null);
-  const [contract, setContract] = useState(null);
+  const { isConnected } = useAccount();
+  const { writeContract } = useWriteContract();
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [isAdvertEnabled, setIsAdvertEnabled] = useState(true);
   const [productData, setProductData] = useState({
@@ -27,83 +30,6 @@ const ListProductPage = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [contractAddress, setContractAddress] = useState(
-    "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  );
-  const [networkId, setNetworkId] = useState(null);
-
-  useEffect(() => {
-    const initWeb3 = async () => {
-      if (window.ethereum) {
-        const web3Instance = new Web3(window.ethereum);
-        setWeb3(web3Instance);
-
-        try {
-          await window.ethereum.enable();
-          const accounts = await web3Instance.eth.getAccounts();
-          setAccount(accounts[0]);
-          const actualABI = DAY1_ABI[0].abi;
-          console.log("Actual ABI:", actualABI);
-
-          if (!Array.isArray(actualABI) || actualABI.length === 0) {
-            throw new Error("ABI is not properly defined or imported");
-          }
-
-          const netId = await web3Instance.eth.net.getId();
-          setNetworkId(netId);
-
-          if (netId !== 31337) {
-            setError("Please connect to your local network in MetaMask");
-            return;
-          }
-
-          const contractInstance = new web3Instance.eth.Contract(
-            actualABI,
-            contractAddress
-          );
-          if (!contractInstance || !contractInstance.methods) {
-            throw new Error(
-              "Contract instance or methods not properly initialized"
-            );
-          }
-          setContract(contractInstance);
-          console.log("Contract Instance:", contractInstance);
-          console.log(
-            "Available contract methods:",
-            Object.keys(contractInstance.methods)
-          );
-
-          // Test the listProduct method
-          if (contractInstance.methods.listProduct) {
-            console.log("listProduct method exists");
-          } else {
-            console.log("listProduct method does not exist");
-          }
-        } catch (error) {
-          console.error("Initialization error:", error);
-        }
-      } else {
-        console.error(
-          "Non-Ethereum browser detected. Please install MetaMask!"
-        );
-      }
-    };
-
-    initWeb3();
-    // Listen for network changes
-    if (window.ethereum) {
-      window.ethereum.on("networkChanged", (newNetworkId) => {
-        setNetworkId(parseInt(newNetworkId));
-      });
-    }
-
-    return () => {
-      // Clean up listener
-      if (window.ethereum && window.ethereum.removeListener) {
-        window.ethereum.removeListener("networkChanged", setNetworkId);
-      }
-    };
-  }, [contractAddress]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -114,17 +40,8 @@ const ListProductPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    // Check network before proceeding
-    if (networkId !== 31337) {
-      setError("Please connect to your local network in MetaMask");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!web3 || !contract) {
-      setError(
-        "Web3 or contract not initialized. Please check your MetaMask connection."
-      );
+    if (!isConnected) {
+      setError("Please connect your wallet first.");
       setIsLoading(false);
       return;
     }
@@ -143,19 +60,22 @@ const ListProductPage = () => {
       : 0n;
 
     try {
-      const result = await contract.methods
-        .listProduct({
-          name,
-          price: web3.utils.toWei(price, "ether"),
-          lat: latBigInt,
-          long: longBigInt,
-          quantity,
-          productURI,
-        })
-        .send({ from: account });
-
-      console.log("Transaction result:", result);
-      alert("Product listed successfully!");
+      writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: DAY1_ABI[0].abi,
+        functionName: "listProduct",
+        args: [
+          {
+            name,
+            price: parseEther(price),
+            lat: latBigInt,
+            long: longBigInt,
+            quantity: window.BigInt(quantity),
+            productURI,
+          },
+        ],
+      });
+      toast.success("Product listed successfully!");
       setProductData({
         name: "",
         price: "",
@@ -167,27 +87,28 @@ const ListProductPage = () => {
     } catch (error) {
       console.error("Error listing product: ", error);
       setError(`Failed to list product: ${error.message}`);
+      toast.error(`Failed to list product: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className='list-product-page'>
-      <nav className='list-product-navbar'>
-        <div className='container'>
-          <div className='logo'>
-            <img src={logo} alt='Dayones Logo' />
-            <span className='logo-text'>dayones</span>
+    <div className="list-product-page">
+      <nav className="list-product-navbar">
+        <div className="container">
+          <div className="logo">
+            <img src={logo} alt="Dayones Logo" />
+            <span className="logo-text">dayones</span>
           </div>
-          <span className='list-product-text'>List Product</span>
+          <span className="list-product-text">List Product</span>
         </div>
       </nav>
 
-      <main className='list-product-main'>
-        <div className='container list-product-content'>
-          <div className='signup-image'>
-            <img src={boy} alt='Signup' className='rounded-3xl' />
+      <main className="list-product-main">
+        <div className="container list-product-content">
+          <div className="signup-image">
+            <img src={boy} alt="Signup" className="rounded-3xl" />
           </div>
           <div className="list-product-form">
             <form onSubmit={handleListProduct}>
@@ -205,11 +126,6 @@ const ListProductPage = () => {
                   />
                 </div>
               </div>
-              {networkId !== 31337 && (
-                <div className="error-message">
-                  Please connect to your local network in MetaMask
-                </div>
-              )}
               <div className="form-group">
                 <label htmlFor="price">Price *</label>
                 <div className="input-wrapper">
@@ -226,25 +142,25 @@ const ListProductPage = () => {
                 </div>
               </div>
 
-              <div className='form-group'>
-                <label htmlFor='location' className='location-label'>
+              <div className="form-group">
+                <label htmlFor="location" className="location-label">
                   Turn on Location *
-                  <div className='toggle-switch'>
+                  <div className="toggle-switch">
                     <input
-                      type='checkbox'
-                      id='location'
+                      type="checkbox"
+                      id="location"
                       checked={!isLocationEnabled}
                       onChange={() => setIsLocationEnabled(!isLocationEnabled)}
                     />
-                    <span className='slider round'></span>
+                    <span className="slider round"></span>
                   </div>
                 </label>
                 {isLocationEnabled && (
-                  <div className='input-wrapper'>
+                  <div className="input-wrapper">
                     <img
                       src={locationIcon}
-                      alt='Location'
-                      className='input-icon'
+                      alt="Location"
+                      className="input-icon"
                     />
                     <input
                       type="text"
@@ -264,10 +180,10 @@ const ListProductPage = () => {
                 )}
               </div>
 
-              <div className='form-group'>
-                <label htmlFor='quantity'>Quantity *</label>
-                <div className='input-wrapper'>
-                  <img src={qtyIcon} alt='Quantity' className='input-icon' />
+              <div className="form-group">
+                <label htmlFor="quantity">Quantity *</label>
+                <div className="input-wrapper">
+                  <img src={qtyIcon} alt="Quantity" className="input-icon" />
                   <input
                     type="number"
                     id="quantity"
@@ -280,10 +196,10 @@ const ListProductPage = () => {
                 </div>
               </div>
 
-              <div className='form-group'>
-                <label htmlFor='productUri'>Product URI *</label>
-                <div className='input-wrapper'>
-                  <img src={linkIcon} alt='URI' className='input-icon' />
+              <div className="form-group">
+                <label htmlFor="productUri">Product URI *</label>
+                <div className="input-wrapper">
+                  <img src={linkIcon} alt="URI" className="input-icon" />
                   <input
                     type="url"
                     id="productUri"
@@ -295,17 +211,17 @@ const ListProductPage = () => {
                 </div>
               </div>
 
-              <div className='form-group'>
-                <label htmlFor='advert' className='location-label'>
+              <div className="form-group">
+                <label htmlFor="advert" className="location-label">
                   Enable Advert-
-                  <div className='toggle-switch'>
+                  <div className="toggle-switch">
                     <input
-                      type='checkbox'
-                      id='advert'
+                      type="checkbox"
+                      id="advert"
                       checked={!isAdvertEnabled}
                       onChange={() => setIsAdvertEnabled(!isAdvertEnabled)}
                     />
-                    <span className='slider round'></span>
+                    <span className="slider round"></span>
                   </div>
                 </label>
               </div>
@@ -313,15 +229,21 @@ const ListProductPage = () => {
               <button
                 type="submit"
                 className="btn-list-product"
-                disabled={isLoading}
+                disabled={isLoading || !isConnected}
               >
                 {isLoading ? "Listing Product..." : "List Product"}
               </button>
             </form>
             {error && <div className="error-message">{error}</div>}
+            {!isConnected && (
+              <div className="warning-message">
+                Please connect your wallet to list a product.
+              </div>
+            )}
           </div>
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 };

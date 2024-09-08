@@ -1,6 +1,7 @@
 # frontend design
 
 ## core functionalities
+
 - login(signin with ethereum or google); all
 - signup(email, connect wallet); all
 
@@ -11,10 +12,11 @@
 - set default carrier(userId); vendor
 
 <!-- - rate product(star rating, comment); buyer -->
+
 - add product to cart(productId); buyer
 - checkout(lat, long, productId/s); buyer
 - remove product from cart(userId, productId); buyer
-- cancel purchase(userId, productId); buyer 
+- cancel purchase(userId, productId); buyer
 
 - mark delivered(userId, productId); carrier, buyer
 
@@ -29,9 +31,10 @@
 <!-- - faucet(userId) -->
 
 ## screens
+
 - home(login, signup)
 - profile(set default carrier, add phone no)
-- products(add to cart); default filter product by, 
+- products(add to cart); default filter product by,
 - product(assign carrier, unlist, mark delivered, start delivery, cancel purchase)
 - list product
 - update product
@@ -42,22 +45,25 @@
 - cart(increase quantity, remove form cart)
 
 ### deliveries
+
 - profile(email, phone no)
 - products
 - product(other images, description, keywords, delivery fee, status[none, pending, in-transit, cancelled, delivered, conflict], storage location, carrier, map[optional])
 
 ### sales
+
 - profile
 - products(only ones listed)
 - product
 
 ### purchases
+
 - profile
 - products
 - product(ratings, reviews, description, price, quantity, category, tags, delivery time, delivery fee)
 - cart
 
-# info for creating advert
+## info for creating advert
 
 - name
 - age
@@ -69,8 +75,8 @@
 - hobbies
 - income level
 
-
 ## caveats
+
 - cannot patronize self!!!
 - cannot be in pending for too long
 - cannot be in transit for too long
@@ -78,27 +84,29 @@
 - buyer can only cancel purchase when pending
 - not accounting for the difference in locations when delivering
 
+## database design
 
-# database design
-the main thing the backend does is 
+the main thing the backend does is
 
 1. authenticate - user table
 2. sign in with web3
-<!-- 2. send and store files -->
 3. fetch and filter products - products table
 4. manage the cart - cart table
 5. tracks ratings - ratings table
+<!-- 2. send and store files -->
 
 - users(int userid, bool verified, string email, string name, string address)
 - carts
 - product tags
 - products(int id, Status status)
 
-# smart contracts
+## smart contracts
+
 - ordererc1155
 - token
 
 ## abi
+
 - quote product
 - quote products(lat, long)
 - purchase product(lat, long)
@@ -109,18 +117,19 @@ the main thing the backend does is
 - unlist products
 - update product
 
-# frontend additions
+## frontend additions
 
-- round the edges of the center image in the image section
--
+- round the edges of the center image in the image section - done
+<!-- add more here -->
 
-# DEV IMPROVEMENT
+## DEV IMPROVEMENT
+
 - add map view, address and current location; product delivery lifecycle tracking
 - conflict
 - targeted ads with ai
--
 
-# distance calculation
+## distance calculation
+
 from argentina to paris
 
 city, lat long
@@ -128,3 +137,7 @@ paris; 48.866699 2.483300
 argentina; -34.920345 -57.969559
 
 11064.89 km
+
+## script to run smart contract locally
+
+forge script script/Deploy.s.sol --fork-url http://127.0.0.1:8545 --broadcast
