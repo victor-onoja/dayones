@@ -151,7 +151,7 @@ input:checked + .slider:before {
 
 .btn-list-product {
   width: 100%;
-  background-color: #006400; /* Dark green */
+  background-color: #00a000; /* Lighter green */
   color: #fff;
   border: none;
   padding: 12px;
@@ -159,6 +159,23 @@ input:checked + .slider:before {
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+.btn-list-product:hover {
+  background-color: #008000; /* Slightly darker on hover */
+}
+
+.btn-list-product:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
 }
 
 @media (max-width: 768px) {

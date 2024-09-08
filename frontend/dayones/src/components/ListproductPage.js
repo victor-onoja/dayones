@@ -1,8 +1,14 @@
-import React, { useState } from "react";
-import { useAccount, useWriteContract } from "wagmi";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  useAccount,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { parseEther } from "ethers";
 import DAY1_ABI from "../constants/abi";
 import CONTRACT_ADDRESS from "../constants/contract-address";
+import MAP_API_KEY from "../constants/mapkey";
 import "./ListProductPage.css";
 import logo from "./logo.png";
 import boy from "./boy.png";
@@ -15,29 +21,110 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ListProductPage = () => {
+  const navigate = useNavigate();
   const { isConnected } = useAccount();
-  const { writeContract } = useWriteContract();
+  const {
+    writeContract,
+    data: hash,
+    isPending,
+    error: writeError,
+  } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [isAdvertEnabled, setIsAdvertEnabled] = useState(true);
+  // const [productData, setProductData] = useState({
+  //   name: "rust",
+  //   price: "5",
+  //   lat: "-10.8544921875",
+  //   long: "49.82380908513249",
+  //   quantity: "2",
+  //   productURI:
+  //     "https://github.com/dashingfon/dayonesDemo/blob/master/uri.json",
+  // });
   const [productData, setProductData] = useState({
-    name: "rust",
-    price: "5",
-    lat: "-10.8544921875",
-    long: "49.82380908513249",
-    quantity: "2",
-    productURI:
-      "https://github.com/dashingfon/dayonesDemo/blob/master/uri.json",
+    name: "",
+    price: "",
+    lat: "",
+    long: "",
+    quantity: "1",
+    productURI: "",
+    address: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
+
+  useEffect(() => {
+    if (isLocationEnabled) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setProductData({
+            ...productData,
+            lat: position.coords.latitude.toString(),
+            long: position.coords.longitude.toString(),
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          toast.error("Failed to get your location. Please enter it manually.");
+        }
+      );
+    }
+  }, [isLocationEnabled, productData]);
+
+  const validateForm = () => {
+    const errors = {};
+    if (!productData.name.trim()) errors.name = "Product name is required";
+    if (!productData.price || parseFloat(productData.price) <= 0)
+      errors.price = "Price must be greater than zero";
+    if (!productData.quantity || parseInt(productData.quantity) <= 0)
+      errors.quantity = "Quantity must be greater than zero";
+    if (!productData.productURI.trim())
+      errors.productURI = "Product URI is required";
+    if (isLocationEnabled && (!productData.lat || !productData.long)) {
+      errors.location = "Location is required when enabled";
+    } else if (!isLocationEnabled && !productData.address.trim()) {
+      errors.address = "Address is required when location is not enabled";
+    }
+    return errors;
+  };
+
+  const getCoordinatesFromAddress = async (address) => {
+    try {
+      const encodedAddress = encodeURIComponent(address);
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${MAP_API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry.location;
+        return { lat: lat.toString(), long: lng.toString() };
+      } else {
+        throw new Error("Unable to geocode address");
+      }
+    } catch (error) {
+      console.error("Error in geocoding:", error);
+      throw error;
+    }
+  };
 
   const handleChange = (e) => {
     const { id, value } = e.target;
     setProductData({ ...productData, [id]: value });
+    setFormErrors({ ...formErrors, [id]: "" });
   };
 
   const handleListProduct = async (e) => {
     e.preventDefault();
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
     setIsLoading(true);
     setError(null);
     if (!isConnected) {
@@ -46,18 +133,30 @@ const ListProductPage = () => {
       return;
     }
 
-    const { name, price, lat, long, quantity, productURI } = productData;
+    let { name, price, lat, long, quantity, productURI, address } = productData;
+
+    if (!isLocationEnabled) {
+      try {
+        const coordinates = await getCoordinatesFromAddress(address);
+        lat = coordinates.lat;
+        long = coordinates.long;
+      } catch (error) {
+        console.error("Error getting coordinates:", error);
+        setError(
+          "Failed to get coordinates from address. Please check the address and try again."
+        );
+        setIsLoading(false);
+        return;
+      }
+    }
 
     const convertToBigInt = (coordinate) => {
-      const radians = (coordinate * Math.PI) / 180;
-      const radiansBigInt = window.BigInt(Math.floor(radians * 10 ** 18));
-      return radiansBigInt;
+      const radians = (parseFloat(coordinate) * Math.PI) / 180;
+      return window.BigInt(Math.floor(radians * 10 ** 18));
     };
 
-    const latBigInt = isLocationEnabled ? convertToBigInt(parseFloat(lat)) : 0n;
-    const longBigInt = isLocationEnabled
-      ? convertToBigInt(parseFloat(long))
-      : 0n;
+    const latBigInt = convertToBigInt(lat);
+    const longBigInt = convertToBigInt(long);
 
     try {
       writeContract({
@@ -75,15 +174,8 @@ const ListProductPage = () => {
           },
         ],
       });
-      toast.success("Product listed successfully!");
-      setProductData({
-        name: "",
-        price: "",
-        lat: "",
-        long: "",
-        quantity: "",
-        productURI: "",
-      });
+      toast.info("Transaction submitted. Waiting for confirmation...");
+      console.log(name, price, lat, long, quantity, productURI, address);
     } catch (error) {
       console.error("Error listing product: ", error);
       setError(`Failed to list product: ${error.message}`);
@@ -92,6 +184,29 @@ const ListProductPage = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (writeError) {
+      setError(`Failed to list product: ${writeError.message}`);
+      toast.error(`Failed to list product: ${writeError.message}`);
+    }
+  }, [writeError]);
+
+  useEffect(() => {
+    if (isConfirmed) {
+      toast.success("Product listed successfully!");
+      setProductData({
+        name: "",
+        price: "",
+        lat: "",
+        long: "",
+        quantity: "1",
+        productURI: "",
+        address: "",
+      });
+      navigate("/products");
+    }
+  }, [isConfirmed, navigate]);
 
   return (
     <div className="list-product-page">
@@ -118,13 +233,16 @@ const ListProductPage = () => {
                   <img src={person} alt="Product" className="input-icon" />
                   <input
                     type="text"
-                    id="productName"
+                    id="name"
                     placeholder="Enter product name"
                     value={productData.name}
                     onChange={handleChange}
                     required
                   />
                 </div>
+                {formErrors.name && (
+                  <span className="error">{formErrors.name}</span>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="price">Price *</label>
@@ -140,22 +258,25 @@ const ListProductPage = () => {
                     required
                   />
                 </div>
+                {formErrors.price && (
+                  <span className="error">{formErrors.price}</span>
+                )}
               </div>
 
               <div className="form-group">
                 <label htmlFor="location" className="location-label">
-                  Turn on Location *
+                  Use Current Location
                   <div className="toggle-switch">
                     <input
                       type="checkbox"
                       id="location"
-                      checked={!isLocationEnabled}
+                      checked={isLocationEnabled}
                       onChange={() => setIsLocationEnabled(!isLocationEnabled)}
                     />
                     <span className="slider round"></span>
                   </div>
                 </label>
-                {isLocationEnabled && (
+                {isLocationEnabled ? (
                   <div className="input-wrapper">
                     <img
                       src={locationIcon}
@@ -165,18 +286,39 @@ const ListProductPage = () => {
                     <input
                       type="text"
                       id="lat"
-                      placeholder="Enter latitude"
+                      placeholder="Latitude"
                       value={productData.lat}
-                      onChange={handleChange}
+                      readOnly
                     />
                     <input
                       type="text"
                       id="long"
-                      placeholder="Enter longitude"
+                      placeholder="Longitude"
                       value={productData.long}
+                      readOnly
+                    />
+                  </div>
+                ) : (
+                  <div className="input-wrapper">
+                    <img
+                      src={locationIcon}
+                      alt="Address"
+                      className="input-icon"
+                    />
+                    <input
+                      type="text"
+                      id="address"
+                      placeholder="Enter your address"
+                      value={productData.address}
                       onChange={handleChange}
                     />
                   </div>
+                )}
+                {formErrors.location && (
+                  <span className="error">{formErrors.location}</span>
+                )}
+                {formErrors.address && (
+                  <span className="error">{formErrors.address}</span>
                 )}
               </div>
 
@@ -194,6 +336,9 @@ const ListProductPage = () => {
                     required
                   />
                 </div>
+                {formErrors.quantity && (
+                  <span className="error">{formErrors.quantity}</span>
+                )}
               </div>
 
               <div className="form-group">
@@ -202,18 +347,21 @@ const ListProductPage = () => {
                   <img src={linkIcon} alt="URI" className="input-icon" />
                   <input
                     type="url"
-                    id="productUri"
+                    id="productURI"
                     placeholder="Enter product URI"
                     value={productData.productURI}
                     onChange={handleChange}
                     required
                   />
                 </div>
+                {formErrors.productURI && (
+                  <span className="error">{formErrors.productURI}</span>
+                )}
               </div>
 
               <div className="form-group">
                 <label htmlFor="advert" className="location-label">
-                  Enable Advert-
+                  Enable Advert
                   <div className="toggle-switch">
                     <input
                       type="checkbox"
@@ -229,15 +377,34 @@ const ListProductPage = () => {
               <button
                 type="submit"
                 className="btn-list-product"
-                disabled={isLoading || !isConnected}
+                disabled={
+                  isLoading || isPending || isConfirming || !isConnected
+                }
               >
-                {isLoading ? "Listing Product..." : "List Product"}
+                {isLoading || isPending
+                  ? "Submitting Transaction..."
+                  : isConfirming
+                  ? "Confirming Transaction..."
+                  : "List Product"}
               </button>
             </form>
             {error && <div className="error-message">{error}</div>}
             {!isConnected && (
               <div className="warning-message">
                 Please connect your wallet to list a product.
+              </div>
+            )}
+            {hash && (
+              <div className="transaction-info">Transaction Hash: {hash}</div>
+            )}
+            {isConfirming && (
+              <div className="transaction-status">
+                Waiting for confirmation...
+              </div>
+            )}
+            {isConfirmed && (
+              <div className="transaction-status success">
+                Transaction confirmed. Product listed successfully!
               </div>
             )}
           </div>
