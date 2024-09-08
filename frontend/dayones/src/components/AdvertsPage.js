@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import "./AdvertsPage.css";
 import ProductsNavbar from "./ProductsNavbar";
 import { ShoppingCart, Play } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AdvertsPage = () => {
   const [showMyAdverts, setShowMyAdverts] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const adverts = [
     {
@@ -67,35 +68,35 @@ const AdvertsPage = () => {
   };
 
   return (
-    <div className='adverts-page'>
+    <div className="adverts-page">
       <ProductsNavbar />
-      <div className='adverts-content'>
-        <section className='advert-controls'>
-          <div className='container'>
-            <div className='toggle-container'>
-              <label className='switch'>
+      <div className="adverts-content">
+        <section className="advert-controls">
+          <div className="container">
+            <div className="toggle-container">
+              <label className="switch">
                 <input
-                  type='checkbox'
+                  type="checkbox"
                   checked={showMyAdverts}
                   onChange={() => setShowMyAdverts(!showMyAdverts)}
                 />
-                <span className='slider round'></span>
+                <span className="slider round"></span>
               </label>
-              <span>{showMyAdverts ? 'My Adverts' : 'Adverts'}</span>
+              <span>{showMyAdverts ? "My Adverts" : "Adverts"}</span>
             </div>
-            <div className='advert-actions'>
-              <button className='btn-ver' onClick={() => navigate('/verify')}>
+            <div className="advert-actions">
+              <button className="btn-ver" onClick={() => navigate("/verify")}>
                 Verify
               </button>
-              <label className='switch'>
+              <label className="switch">
                 <input
-                  type='checkbox'
+                  type="checkbox"
                   checked={isSubscribed}
                   onChange={() => setIsSubscribed(!isSubscribed)}
                 />
-                <span className='slider round'></span>
+                <span className="slider round"></span>
               </label>
-              <span>{isSubscribed ? 'Subscribed' : 'Unsubscribed'}</span>
+              <span>{isSubscribed ? "Subscribed" : "Unsubscribed"}</span>
             </div>
           </div>
         </section>
