@@ -4,6 +4,7 @@ import {
   useAccount,
   useWriteContract,
   useWaitForTransactionReceipt,
+  useWatchContractEvent,
 } from "wagmi";
 import { parseEther } from "ethers";
 import DAY1_ABI from "../constants/abi";
@@ -35,6 +36,7 @@ const ListProductPage = () => {
     });
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [isAdvertEnabled, setIsAdvertEnabled] = useState(true);
+  const [isProductListed, setIsProductListed] = useState(false);
   // const [productData, setProductData] = useState({
   //   name: "rust",
   //   price: "5",
@@ -57,6 +59,19 @@ const ListProductPage = () => {
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
+  useWatchContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: DAY1_ABI[0].abi,
+    eventName: "ProductListed",
+    onLogs(logs) {
+      console.log("Product Listed Event:", logs);
+      setIsProductListed(true);
+    },
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
+
   useEffect(() => {
     if (isLocationEnabled) {
       navigator.geolocation.getCurrentPosition(
@@ -74,6 +89,13 @@ const ListProductPage = () => {
       );
     }
   }, [isLocationEnabled, productData]);
+
+  useEffect(() => {
+    if (isProductListed) {
+      toast.success("Product listed successfully! Event received.");
+      navigate("/products");
+    }
+  }, [isProductListed, navigate]);
 
   const validateForm = () => {
     const errors = {};
@@ -127,6 +149,7 @@ const ListProductPage = () => {
     }
     setIsLoading(true);
     setError(null);
+    setIsProductListed(false);
     if (!isConnected) {
       setError("Please connect your wallet first.");
       setIsLoading(false);
@@ -193,8 +216,8 @@ const ListProductPage = () => {
   }, [writeError]);
 
   useEffect(() => {
-    if (isConfirmed) {
-      toast.success("Product listed successfully!");
+    if (isConfirmed && !isProductListed) {
+      toast.info("Transaction confirmed. Waiting for ProductListed event...");
       setProductData({
         name: "",
         price: "",
@@ -204,9 +227,8 @@ const ListProductPage = () => {
         productURI: "",
         address: "",
       });
-      navigate("/products");
     }
-  }, [isConfirmed, navigate]);
+  }, [isConfirmed, isProductListed]);
 
   return (
     <div className="list-product-page">
@@ -385,6 +407,8 @@ const ListProductPage = () => {
                   ? "Submitting Transaction..."
                   : isConfirming
                   ? "Confirming Transaction..."
+                  : isConfirmed && !isProductListed
+                  ? "Waiting for Event..."
                   : "List Product"}
               </button>
             </form>
@@ -405,6 +429,16 @@ const ListProductPage = () => {
             {isConfirmed && (
               <div className="transaction-status success">
                 Transaction confirmed. Product listed successfully!
+              </div>
+            )}
+            {isConfirmed && !isProductListed && (
+              <div className="transaction-status">
+                Transaction confirmed. Waiting for ProductListed event...
+              </div>
+            )}
+            {isProductListed && (
+              <div className="transaction-status success">
+                Product listed successfully! Event received.
               </div>
             )}
           </div>

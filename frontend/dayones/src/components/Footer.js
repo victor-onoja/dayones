@@ -21,7 +21,7 @@ const Footer = () => {
         <div className="footer-content">
           <div className="footer-logo">
             <img src={footerlogo} alt="Dayones Logo" />
-            <span>dayones</span>
+            <span>DAYONES</span>
           </div>
           <p className="copyright">
             © 2024 Dayones Technologies. All rights reserved.

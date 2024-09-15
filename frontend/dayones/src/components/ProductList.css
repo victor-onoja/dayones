@@ -80,9 +80,10 @@
   margin-right: 5px;
 }
 
-.product-price {
-  font-weight: bold;
-}
+/* .product-price {
+  font-weight: 300;
+  color: #000;
+} */
 
 .add-to-cart-button {
   width: 100%;
