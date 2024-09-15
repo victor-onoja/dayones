@@ -18,6 +18,7 @@ import AdvertsPage from "./components/AdvertsPage";
 import VerifyPage from "./components/VerifyPage";
 import CartPage from "./components/CartPage";
 import StartAdvertPage from "./components/StartAdvertPage";
+import ProductPage from "./components/ProductPage";
 
 const localChain = {
   id: 31337,
@@ -54,6 +55,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/products" element={<ProductsPage />} />
+                <Route path="/product/:id" element={<ProductPage />} />
                 <Route path="/listproducts" element={<ListProductPage />} />
                 <Route path="/orders" element={<OrdersPage />} />
                 <Route path="/deliveries" element={<DeliveriesPage />} />
