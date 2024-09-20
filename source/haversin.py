@@ -2,6 +2,7 @@ from math import radians, cos, sin, asin, sqrt
 
 ER = 6372.8
 
+
 def haversin(lng1, lat1, lng2, lat2):
     lat1 = radians(lat1)
     lng1 = radians(lng1)
@@ -10,9 +11,10 @@ def haversin(lng1, lat1, lng2, lat2):
 
     lat = lat2 - lat1
     lng = lng2 - lng1
-    d = (sin(lat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(lng / 2) ** 2)
-    
+    d = sin(lat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(lng / 2) ** 2
+
     return ER * 2 * asin(sqrt(d))
+
 
 def harversin2(lng1, lat1, lng2, lat2):
     lat1 = radians(lat1)
@@ -22,8 +24,8 @@ def harversin2(lng1, lat1, lng2, lat2):
 
     lat = lat2 - lat1
     lng = lng2 - lng1
-    d = (sin(lat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(lng / 2) ** 2)
-    
+    d = sin(lat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(lng / 2) ** 2
+
     return ER * 2 * asin(sqrt(d))
 
 
@@ -35,7 +37,6 @@ def _haversine_kernel(lat1, lng1, lat2, lng2):
     # int256 sin_long = Trigonometry.sin(dlon / 2);
     # int256 cos_lat1 = Trigonometry.cos(absolute(lat1));
     # int256 cos_lat2 = Trigonometry.cos(absolute(lat2));
-
 
     lat1 = radians(lat1)
     lng1 = radians(lng1)
@@ -49,13 +50,14 @@ def _haversine_kernel(lat1, lng1, lat2, lng2):
     sin_lon = sin(dlon / 2)
     cos_lat1 = cos(lat1)
     cos_lat2 = cos(lat2)
-    sin_lat2 = (sin_lat * sin_lat)
-    sin_lon2 = (sin_lon * sin_lon)
+    sin_lat2 = sin_lat * sin_lat
+    sin_lon2 = sin_lon * sin_lon
 
     lng = lng2 - lng1
-    d = (sin_lat2 + cos_lat1 * cos_lat2 * sin_lon2)
-    
+    d = sin_lat2 + cos_lat1 * cos_lat2 * sin_lon2
+
     return ER * 2 * asin(sqrt(d))
+
 
 # Usage
 # lon1 = -103.548851
@@ -79,7 +81,7 @@ lat2 = -34.920345
 
 from haversine import haversine, Unit
 
-lyon = (lat1, lon1) # (lat, lon)
+lyon = (lat1, lon1)  # (lat, lon)
 paris = (lat2, lon2)
 
 # print(haversine(lyon, paris))

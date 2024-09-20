@@ -1,4 +1,4 @@
-from web3 import Web3
-from solcx import compile_source
+import pathlib
 
-compiled_sol = compile_source()
+baby = "baby"
+print(pathlib.PurePath(r"out").joinpath(f"{baby}.sol", f"{baby}.json"))

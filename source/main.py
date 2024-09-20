@@ -2,19 +2,23 @@
 # import os
 import uuid
 import time
+
 # import json
 # import asyncio
 # from datetime import datetime
 from typing import Annotated
 
 from fastapi import FastAPI, Request, Response, Form, HTTPException, Body
+
 # from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+
 # from fastapi.staticfiles import StaticFiles
 from fastapi.params import Depends
 
 from . import database as db
 from . import encoder as enc
+
 # from . import executor as exe
 from contextlib import asynccontextmanager
 
@@ -31,9 +35,9 @@ app.add_middleware(
 
 SIGNATURE_EXPIRY = 300  # 5 minutes in seconds
 
+
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    ...
+async def lifespan(app: FastAPI): ...
 
 
 @app.post("/login_request")
@@ -82,19 +86,19 @@ def logout_request(request: Request, session: db.Session = Depends(get_session))
     if admin_session:
         db.delete(session, admin_session[0])
         return "Logged Out"
-    
+
+
 @app.get("/cart")
-def get_cart():
-    ...
+def get_cart(): ...
+
 
 @app.post("/cart")
-def add_cart():
-    ...
+def add_cart(): ...
+
 
 @app.get("/advert")
-def get_advert():
-    ...
+def get_advert(): ...
+
 
 @app.post("/signup_request")
-def signup_request():
-    ...
+def signup_request(): ...
