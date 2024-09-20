@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import time
 import pathlib
 from web3 import AsyncWeb3, Web3
 from web3.types import TxReceipt
@@ -16,6 +17,7 @@ load_dotenv()
 # if it is not foundry at least it must be a compatible output file
 # this sets the build directory
 BUILDPATH: pathlib.PurePath = pathlib.PurePath(r"out")
+BROADCASTPATH: pathlib.PurePath = pathlib.PurePath(r"broadcast\pyruns")
 
 
 def get_w3(url: str) -> Web3 | AsyncWeb3:
@@ -38,7 +40,26 @@ def getenvVar(alias: str) -> str:
     return val
 
 
-def save_transaction(reciept: TxReceipt) -> None: ...
+def save_transaction(nonce: int, chainId: int, reciept: TxReceipt, timestamp: int) -> None:
+    fileName = BROADCASTPATH.joinpath(f"run-{timestamp}.json")
+    with open(fileName, "w") as file:
+        json.dump(
+            {
+                "chainid": 0,
+                "blockhash": reciept["blockHash"].hex(),
+                "blocknumber": reciept["blockNumber"],
+                "txhash": reciept["transactionHash"].hex(),
+                "contractAddress": reciept["contractAddress"],
+                "transaction": {
+                    "from": reciept["from"],
+                    "to": str(reciept["to"]),
+                    "gas": reciept["gasUsed"],
+                    "nonce": nonce,
+                    "chainId": chainId,
+                },
+            },
+            file,
+        )
 
 
 def placeholders(bytecode: str) -> list[str] | None:
@@ -58,7 +79,7 @@ def resolve_placeholder(
     for item in placeholders:
         build = getBuild(refrence[item])
         libtx = deploy(alias, build, url, save)
-        bytecode.replace(item, str(libtx.contractAddress).lower())
+        bytecode = bytecode.replace(item, str(libtx.contractAddress).lower()[2:])
 
     return bytecode
 
@@ -68,32 +89,34 @@ def hashString(string: str):
 
 
 def getContractName(string: str) -> str:
-    se = re.search(r"\\([a-zA-Z]+)\.", string)
+    se = re.search(r"[/\\]([a-zA-Z]+)\.", string)
     if se is None:
         return ""
-    return se[0][2:-1]
+    return se[0][1:-1]
 
 
 def get_refrences(build: dict) -> dict[str, str]:
     refrences: dict = build["bytecode"]["linkReferences"]
+    result: dict = {}
     for key, value in refrences.items():
         for item in value:
             key_ = f"{key}:{item}"
-            refrences[f"__${hashString(key_)}$__"] = getContractName(key)
-
-    return refrences
+            result[f"__${hashString(key_)}$__"] = getContractName(key)
+    return result
 
 
 def deploy(
-    alias: str, build: dict, url: str = "http://127.0.0.1:8545/", save: bool = False
+    alias: str, build: dict, url: str = "http://127.0.0.1:8545/", save: bool = True
 ):
 
     bytecode: str = build["bytecode"]["object"][2:]
-    placeholders: list[str] | None = placeholders(bytecode)
+    placeholder: list[str] | None = placeholders(bytecode)
     refrences = get_refrences(build)
 
-    if placeholders is not None:
-        bytecode = resolve_placeholder(bytecode, save, url, alias, refrences, placeholders)
+    if placeholder is not None:
+        bytecode = resolve_placeholder(
+            bytecode, save, url, alias, refrences, placeholder
+        )
 
     w3 = get_w3(url)
     private_key = getenvVar(alias)
@@ -115,15 +138,14 @@ def deploy(
     txReciept = w3.eth.wait_for_transaction_receipt(txHash)  # type: ignore
 
     if save:
-        print("saving")
+        timestamp = int(time.time())
+        save_transaction(int(nonce), w3.eth.chain_id, txReciept, timestamp)
 
     return txReciept
 
 
-# lib_path = r"out\Haversine.sol\Haversine.json"
-
-lib_build = getBuild("Haversine")
-librarytx = deploy("Alpha", lib_build)
+# lib_build = getBuild("Haversine")
+# librarytx = deploy("Alpha", lib_build)
 
 contract_build = getBuild("OrderManager")
 contracttx = deploy("Alpha", contract_build)
