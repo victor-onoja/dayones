@@ -139,7 +139,7 @@ def deploy(
 
     if save:
         timestamp = int(time.time())
-        save_transaction(int(nonce), w3.eth.chain_id, txReciept, timestamp)
+        save_transaction(int(nonce), w3.eth.chain_id, txReciept, timestamp)  #  type ignore
 
     return txReciept
 
