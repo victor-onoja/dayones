@@ -1,32 +1,67 @@
 import json
-import web3
+import os
+from web3 import AsyncWeb3, Web3
+# from web3.middleware import async_geth_poa_middleware
+from dotenv import load_dotenv
 
-def getABI() -> str:
+load_dotenv()
+
+BUILDPATH: str = r"out\OrderManager.sol\OrderManager.json"
+
+def get_w3(url: str = "http://127.0.0.1:8545/") -> Web3 | AsyncWeb3:
+    w3 = Web3(Web3.HTTPProvider(url))
+
+    # w3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(url))
+    # w3.middleware_onion.inject(async_geth_poa_middleware, layer=0)
+    return w3
+
+def getABI(path: str) -> list:
+    with open(path, 'r') as file:
+        build: list = json.load(file)
+        return build["abi"]
+
+def getBytecode(path: str) -> str:
+    with open(path, 'r') as file:
+        bytecode: list = json.load(file)
+        return bytecode["bytecode"]["object"][2:]
+
+def getenvVar(alias: str) -> str:
+    val = os.environ.get(alias, "")
+    return val
+
+
+def save_transaction():
     ...
 
-def getBytecode() -> str:
-    ...
 
-def getPrivateKey() -> str:
-    ...
+def deploy(alias: str, bytecode: str, abi: list[str], url: str | None = None, save: bool = False):
+    w3 = get_w3(url)
+    private_key = getenvVar(alias)
+    user = w3.eth.account.from_key(private_key)
+    nonce = w3.eth.get_transaction_count(user.address)
+    contract = w3.eth.contract(abi=abi, bytecode=bytecode)
 
-RPCURL = "http://127.0.0.1:8545"
-WALLET = ""
-w3 = web3.Web3(web3.Web3.HTTPProvider(RPCURL))
-nonce = w3.eth.get_transaction_count(WALLET)
+    transaction = contract.constructor().build_transaction(
+        {
+            "gasPrice": w3.eth.gas_price,
+            "chainId": w3.eth.chain_id,
+            "from": user.address,
+            "nonce": nonce
+        }
+    )
+    signedTx = w3.eth.account.sign_transaction(transaction, private_key=private_key)
 
-OrderManager = w3.eth.contract(abi=getABI(), bytecode=getBytecode())
+    txHash = w3.eth.send_raw_transaction(signedTx.rawTransaction)
+    txReciept = w3.eth.wait_for_transaction_receipt(txHash)
 
-transaction = OrderManager.constructor().buildTransaction(
-    {
-        "gasPrice": w3.eth.gas_price,
-        "chainId": w3.eth.chain_id,
-        "from": WALLET,
-        "nonce": nonce
-    }
-)
+    if save:
+        print("saving")
 
-signedTx = w3.eth.account.sign_transaction(transaction, private_key=getPrivateKey())
+    return txReciept
 
-txHash = w3.eth.send_raw_transaction(signedTx.rawTransaction)
-txReciept = w3.eth.wait_for_transaction_receipt(txHash)
+lib_path = "out\Haversine.sol\Haversine.json"
+lib_bytecode = getBytecode()
+lib_abi = getABI()
+
+librarytx = deploy("Alpha", lib_bytecode, lib_abi)
+
