@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Web3 from "web3";
+import { useNavigate } from "react-router-dom";
+import {
+  useAccount,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useWatchContractEvent,
+} from "wagmi";
+import { parseEther } from "ethers";
 import DAY1_ABI from "../constants/abi";
+import CONTRACT_ADDRESS from "../constants/contract-address";
+import MAP_API_KEY from "../constants/mapkey";
 import "./ListProductPage.css";
 import logo from "./logo.png";
 import boy from "./boy.png";
@@ -9,185 +18,234 @@ import priceIcon from "./price-icon.png";
 import locationIcon from "./location-icon.png";
 import qtyIcon from "./qty-icon.png";
 import linkIcon from "./link-icon.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ListProductPage = () => {
-  const [web3, setWeb3] = useState(null);
-  const [account, setAccount] = useState(null);
-  const [contract, setContract] = useState(null);
+  const navigate = useNavigate();
+  const { isConnected } = useAccount();
+  const {
+    writeContract,
+    data: hash,
+    isPending,
+    error: writeError,
+  } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [isAdvertEnabled, setIsAdvertEnabled] = useState(true);
+  const [isProductListed, setIsProductListed] = useState(false);
+  // const [productData, setProductData] = useState({
+  //   name: "rust",
+  //   price: "5",
+  //   lat: "-10.8544921875",
+  //   long: "49.82380908513249",
+  //   quantity: "2",
+  //   productURI:
+  //     "https://github.com/dashingfon/dayonesDemo/blob/master/uri.json",
+  // });
   const [productData, setProductData] = useState({
-    name: "rust",
-    price: "5",
-    lat: "-10.8544921875",
-    long: "49.82380908513249",
-    quantity: "2",
-    productURI:
-      "https://github.com/dashingfon/dayonesDemo/blob/master/uri.json",
+    name: "",
+    price: "",
+    lat: "",
+    long: "",
+    quantity: "1",
+    productURI: "",
+    address: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [contractAddress, setContractAddress] = useState(
-    "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  );
-  const [networkId, setNetworkId] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
+
+  useWatchContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: DAY1_ABI[0].abi,
+    eventName: "ProductListed",
+    onLogs(logs) {
+      console.log("Product Listed Event:", logs);
+      setIsProductListed(true);
+    },
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
 
   useEffect(() => {
-    const initWeb3 = async () => {
-      if (window.ethereum) {
-        const web3Instance = new Web3(window.ethereum);
-        setWeb3(web3Instance);
-
-        try {
-          await window.ethereum.enable();
-          const accounts = await web3Instance.eth.getAccounts();
-          setAccount(accounts[0]);
-          const actualABI = DAY1_ABI[0].abi;
-          console.log("Actual ABI:", actualABI);
-
-          if (!Array.isArray(actualABI) || actualABI.length === 0) {
-            throw new Error("ABI is not properly defined or imported");
-          }
-
-          const netId = await web3Instance.eth.net.getId();
-          setNetworkId(netId);
-
-          if (netId !== 31337) {
-            setError("Please connect to your local network in MetaMask");
-            return;
-          }
-
-          const contractInstance = new web3Instance.eth.Contract(
-            actualABI,
-            contractAddress
-          );
-          if (!contractInstance || !contractInstance.methods) {
-            throw new Error(
-              "Contract instance or methods not properly initialized"
-            );
-          }
-          setContract(contractInstance);
-          console.log("Contract Instance:", contractInstance);
-          console.log(
-            "Available contract methods:",
-            Object.keys(contractInstance.methods)
-          );
-
-          // Test the listProduct method
-          if (contractInstance.methods.listProduct) {
-            console.log("listProduct method exists");
-          } else {
-            console.log("listProduct method does not exist");
-          }
-        } catch (error) {
-          console.error("Initialization error:", error);
+    if (isLocationEnabled) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setProductData({
+            ...productData,
+            lat: position.coords.latitude.toString(),
+            long: position.coords.longitude.toString(),
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          toast.error("Failed to get your location. Please enter it manually.");
         }
-      } else {
-        console.error(
-          "Non-Ethereum browser detected. Please install MetaMask!"
-        );
-      }
-    };
-
-    initWeb3();
-    // Listen for network changes
-    if (window.ethereum) {
-      window.ethereum.on("networkChanged", (newNetworkId) => {
-        setNetworkId(parseInt(newNetworkId));
-      });
+      );
     }
+  }, [isLocationEnabled, productData]);
 
-    return () => {
-      // Clean up listener
-      if (window.ethereum && window.ethereum.removeListener) {
-        window.ethereum.removeListener("networkChanged", setNetworkId);
+  useEffect(() => {
+    if (isProductListed) {
+      toast.success("Product listed successfully! Event received.");
+      navigate("/products");
+    }
+  }, [isProductListed, navigate]);
+
+  const validateForm = () => {
+    const errors = {};
+    if (!productData.name.trim()) errors.name = "Product name is required";
+    if (!productData.price || parseFloat(productData.price) <= 0)
+      errors.price = "Price must be greater than zero";
+    if (!productData.quantity || parseInt(productData.quantity) <= 0)
+      errors.quantity = "Quantity must be greater than zero";
+    if (!productData.productURI.trim())
+      errors.productURI = "Product URI is required";
+    if (isLocationEnabled && (!productData.lat || !productData.long)) {
+      errors.location = "Location is required when enabled";
+    } else if (!isLocationEnabled && !productData.address.trim()) {
+      errors.address = "Address is required when location is not enabled";
+    }
+    return errors;
+  };
+
+  const getCoordinatesFromAddress = async (address) => {
+    try {
+      const encodedAddress = encodeURIComponent(address);
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${MAP_API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry.location;
+        return { lat: lat.toString(), long: lng.toString() };
+      } else {
+        throw new Error("Unable to geocode address");
       }
-    };
-  }, [contractAddress]);
+    } catch (error) {
+      console.error("Error in geocoding:", error);
+      throw error;
+    }
+  };
 
   const handleChange = (e) => {
     const { id, value } = e.target;
     setProductData({ ...productData, [id]: value });
+    setFormErrors({ ...formErrors, [id]: "" });
   };
 
   const handleListProduct = async (e) => {
     e.preventDefault();
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
     setIsLoading(true);
     setError(null);
-    // Check network before proceeding
-    if (networkId !== 31337) {
-      setError("Please connect to your local network in MetaMask");
+    setIsProductListed(false);
+    if (!isConnected) {
+      setError("Please connect your wallet first.");
       setIsLoading(false);
       return;
     }
 
-    if (!web3 || !contract) {
-      setError(
-        "Web3 or contract not initialized. Please check your MetaMask connection."
-      );
-      setIsLoading(false);
-      return;
-    }
+    let { name, price, lat, long, quantity, productURI, address } = productData;
 
-    const { name, price, lat, long, quantity, productURI } = productData;
+    if (!isLocationEnabled) {
+      try {
+        const coordinates = await getCoordinatesFromAddress(address);
+        lat = coordinates.lat;
+        long = coordinates.long;
+      } catch (error) {
+        console.error("Error getting coordinates:", error);
+        setError(
+          "Failed to get coordinates from address. Please check the address and try again."
+        );
+        setIsLoading(false);
+        return;
+      }
+    }
 
     const convertToBigInt = (coordinate) => {
-      const radians = (coordinate * Math.PI) / 180;
-      const radiansBigInt = window.BigInt(Math.floor(radians * 10 ** 18));
-      return radiansBigInt;
+      const radians = (parseFloat(coordinate) * Math.PI) / 180;
+      return window.BigInt(Math.floor(radians * 10 ** 18));
     };
 
-    const latBigInt = isLocationEnabled ? convertToBigInt(parseFloat(lat)) : 0n;
-    const longBigInt = isLocationEnabled
-      ? convertToBigInt(parseFloat(long))
-      : 0n;
+    const latBigInt = convertToBigInt(lat);
+    const longBigInt = convertToBigInt(long);
 
     try {
-      const result = await contract.methods
-        .listProduct({
-          name,
-          price: web3.utils.toWei(price, "ether"),
-          lat: latBigInt,
-          long: longBigInt,
-          quantity,
-          productURI,
-        })
-        .send({ from: account });
-
-      console.log("Transaction result:", result);
-      alert("Product listed successfully!");
-      setProductData({
-        name: "",
-        price: "",
-        lat: "",
-        long: "",
-        quantity: "",
-        productURI: "",
+      writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: DAY1_ABI[0].abi,
+        functionName: "listProduct",
+        args: [
+          {
+            name,
+            price: parseEther(price),
+            lat: latBigInt,
+            long: longBigInt,
+            quantity: window.BigInt(quantity),
+            productURI,
+          },
+        ],
       });
+      toast.info("Transaction submitted. Waiting for confirmation...");
+      console.log(name, price, lat, long, quantity, productURI, address);
     } catch (error) {
       console.error("Error listing product: ", error);
       setError(`Failed to list product: ${error.message}`);
+      toast.error(`Failed to list product: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (writeError) {
+      setError(`Failed to list product: ${writeError.message}`);
+      toast.error(`Failed to list product: ${writeError.message}`);
+    }
+  }, [writeError]);
+
+  useEffect(() => {
+    if (isConfirmed && !isProductListed) {
+      toast.info("Transaction confirmed. Waiting for ProductListed event...");
+      setProductData({
+        name: "",
+        price: "",
+        lat: "",
+        long: "",
+        quantity: "1",
+        productURI: "",
+        address: "",
+      });
+    }
+  }, [isConfirmed, isProductListed]);
+
   return (
-    <div className='list-product-page'>
-      <nav className='list-product-navbar'>
-        <div className='container'>
-          <div className='logo'>
-            <img src={logo} alt='Dayones Logo' />
-            <span className='logo-text'>dayones</span>
+    <div className="list-product-page">
+      <nav className="list-product-navbar">
+        <div className="container">
+          <div className="logo">
+            <img src={logo} alt="Dayones Logo" />
+            <span className="logo-text">dayones</span>
           </div>
-          <span className='list-product-text'>List Product</span>
+          <span className="list-product-text">List Product</span>
         </div>
       </nav>
 
-      <main className='list-product-main'>
-        <div className='container list-product-content'>
-          <div className='signup-image'>
-            <img src={boy} alt='Signup' className='rounded-3xl' />
+      <main className="list-product-main">
+        <div className="container list-product-content">
+          <div className="signup-image">
+            <img src={boy} alt="Signup" className="rounded-3xl" />
           </div>
           <div className="list-product-form">
             <form onSubmit={handleListProduct}>
@@ -197,19 +255,17 @@ const ListProductPage = () => {
                   <img src={person} alt="Product" className="input-icon" />
                   <input
                     type="text"
-                    id="productName"
+                    id="name"
                     placeholder="Enter product name"
                     value={productData.name}
                     onChange={handleChange}
                     required
                   />
                 </div>
+                {formErrors.name && (
+                  <span className="error">{formErrors.name}</span>
+                )}
               </div>
-              {networkId !== 31337 && (
-                <div className="error-message">
-                  Please connect to your local network in MetaMask
-                </div>
-              )}
               <div className="form-group">
                 <label htmlFor="price">Price *</label>
                 <div className="input-wrapper">
@@ -224,50 +280,74 @@ const ListProductPage = () => {
                     required
                   />
                 </div>
+                {formErrors.price && (
+                  <span className="error">{formErrors.price}</span>
+                )}
               </div>
 
-              <div className='form-group'>
-                <label htmlFor='location' className='location-label'>
-                  Turn on Location *
-                  <div className='toggle-switch'>
+              <div className="form-group">
+                <label htmlFor="location" className="location-label">
+                  Use Current Location
+                  <div className="toggle-switch">
                     <input
-                      type='checkbox'
-                      id='location'
-                      checked={!isLocationEnabled}
+                      type="checkbox"
+                      id="location"
+                      checked={isLocationEnabled}
                       onChange={() => setIsLocationEnabled(!isLocationEnabled)}
                     />
-                    <span className='slider round'></span>
+                    <span className="slider round"></span>
                   </div>
                 </label>
-                {isLocationEnabled && (
-                  <div className='input-wrapper'>
+                {isLocationEnabled ? (
+                  <div className="input-wrapper">
                     <img
                       src={locationIcon}
-                      alt='Location'
-                      className='input-icon'
+                      alt="Location"
+                      className="input-icon"
                     />
                     <input
                       type="text"
                       id="lat"
-                      placeholder="Enter latitude"
+                      placeholder="Latitude"
                       value={productData.lat}
-                      onChange={handleChange}
+                      readOnly
                     />
                     <input
                       type="text"
                       id="long"
-                      placeholder="Enter longitude"
+                      placeholder="Longitude"
                       value={productData.long}
+                      readOnly
+                    />
+                  </div>
+                ) : (
+                  <div className="input-wrapper">
+                    <img
+                      src={locationIcon}
+                      alt="Address"
+                      className="input-icon"
+                    />
+                    <input
+                      type="text"
+                      id="address"
+                      placeholder="Enter your address"
+                      value={productData.address}
                       onChange={handleChange}
                     />
                   </div>
                 )}
+                {formErrors.location && (
+                  <span className="error">{formErrors.location}</span>
+                )}
+                {formErrors.address && (
+                  <span className="error">{formErrors.address}</span>
+                )}
               </div>
 
-              <div className='form-group'>
-                <label htmlFor='quantity'>Quantity *</label>
-                <div className='input-wrapper'>
-                  <img src={qtyIcon} alt='Quantity' className='input-icon' />
+              <div className="form-group">
+                <label htmlFor="quantity">Quantity *</label>
+                <div className="input-wrapper">
+                  <img src={qtyIcon} alt="Quantity" className="input-icon" />
                   <input
                     type="number"
                     id="quantity"
@@ -278,34 +358,40 @@ const ListProductPage = () => {
                     required
                   />
                 </div>
+                {formErrors.quantity && (
+                  <span className="error">{formErrors.quantity}</span>
+                )}
               </div>
 
-              <div className='form-group'>
-                <label htmlFor='productUri'>Product URI *</label>
-                <div className='input-wrapper'>
-                  <img src={linkIcon} alt='URI' className='input-icon' />
+              <div className="form-group">
+                <label htmlFor="productUri">Product URI *</label>
+                <div className="input-wrapper">
+                  <img src={linkIcon} alt="URI" className="input-icon" />
                   <input
                     type="url"
-                    id="productUri"
+                    id="productURI"
                     placeholder="Enter product URI"
                     value={productData.productURI}
                     onChange={handleChange}
                     required
                   />
                 </div>
+                {formErrors.productURI && (
+                  <span className="error">{formErrors.productURI}</span>
+                )}
               </div>
 
-              <div className='form-group'>
-                <label htmlFor='advert' className='location-label'>
-                  Enable Advert-
-                  <div className='toggle-switch'>
+              <div className="form-group">
+                <label htmlFor="advert" className="location-label">
+                  Enable Advert
+                  <div className="toggle-switch">
                     <input
-                      type='checkbox'
-                      id='advert'
+                      type="checkbox"
+                      id="advert"
                       checked={!isAdvertEnabled}
                       onChange={() => setIsAdvertEnabled(!isAdvertEnabled)}
                     />
-                    <span className='slider round'></span>
+                    <span className="slider round"></span>
                   </div>
                 </label>
               </div>
@@ -313,15 +399,52 @@ const ListProductPage = () => {
               <button
                 type="submit"
                 className="btn-list-product"
-                disabled={isLoading}
+                disabled={
+                  isLoading || isPending || isConfirming || !isConnected
+                }
               >
-                {isLoading ? "Listing Product..." : "List Product"}
+                {isLoading || isPending
+                  ? "Submitting Transaction..."
+                  : isConfirming
+                  ? "Confirming Transaction..."
+                  : isConfirmed && !isProductListed
+                  ? "Waiting for Event..."
+                  : "List Product"}
               </button>
             </form>
             {error && <div className="error-message">{error}</div>}
+            {!isConnected && (
+              <div className="warning-message">
+                Please connect your wallet to list a product.
+              </div>
+            )}
+            {hash && (
+              <div className="transaction-info">Transaction Hash: {hash}</div>
+            )}
+            {isConfirming && (
+              <div className="transaction-status">
+                Waiting for confirmation...
+              </div>
+            )}
+            {isConfirmed && (
+              <div className="transaction-status success">
+                Transaction confirmed. Product listed successfully!
+              </div>
+            )}
+            {isConfirmed && !isProductListed && (
+              <div className="transaction-status">
+                Transaction confirmed. Waiting for ProductListed event...
+              </div>
+            )}
+            {isProductListed && (
+              <div className="transaction-status success">
+                Product listed successfully! Event received.
+              </div>
+            )}
           </div>
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 };

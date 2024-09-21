@@ -28,7 +28,7 @@
 .logo-text {
   font-size: 24px;
   font-weight: 700;
-  color: #006400; /* Dark green */
+  color: #006400;
 }
 
 .nav-links {
@@ -48,6 +48,7 @@
 
 .nav-icons {
   display: flex;
+  cursor: pointer;
 }
 
 .nav-icons div {
