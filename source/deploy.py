@@ -3,6 +3,7 @@ import re
 import json
 import time
 import pathlib
+
 from web3 import AsyncWeb3, Web3
 from web3.types import TxReceipt
 
@@ -40,12 +41,12 @@ def getenvVar(alias: str) -> str:
     return val
 
 
-def save_transaction(nonce: int, chainId: int, reciept: TxReceipt, timestamp: int) -> None:
+def save_transaction(nonce: int, chainId: int, reciept: TxReceipt, timestamp: float) -> None:
     fileName = BROADCASTPATH.joinpath(f"run-{timestamp}.json")
     with open(fileName, "w") as file:
         json.dump(
             {
-                "chainid": 0,
+                "chainid": chainId,
                 "blockhash": reciept["blockHash"].hex(),
                 "blocknumber": reciept["blockNumber"],
                 "txhash": reciept["transactionHash"].hex(),
@@ -55,7 +56,6 @@ def save_transaction(nonce: int, chainId: int, reciept: TxReceipt, timestamp: in
                     "to": str(reciept["to"]),
                     "gas": reciept["gasUsed"],
                     "nonce": nonce,
-                    "chainId": chainId,
                 },
             },
             file,
@@ -64,8 +64,7 @@ def save_transaction(nonce: int, chainId: int, reciept: TxReceipt, timestamp: in
 
 def placeholders(bytecode: str) -> list[str] | None:
     placeholders = re.findall(r"__\$\w+\$__", bytecode)
-    if placeholders is not None:
-        return list(placeholders)
+    return placeholders
 
 
 def resolve_placeholder(
@@ -113,7 +112,7 @@ def deploy(
     placeholder: list[str] | None = placeholders(bytecode)
     refrences = get_refrences(build)
 
-    if placeholder is not None:
+    if placeholder:
         bytecode = resolve_placeholder(
             bytecode, save, url, alias, refrences, placeholder
         )
@@ -138,8 +137,8 @@ def deploy(
     txReciept = w3.eth.wait_for_transaction_receipt(txHash)  # type: ignore
 
     if save:
-        timestamp = int(time.time())
-        save_transaction(int(nonce), w3.eth.chain_id, txReciept, timestamp)  #  type ignore
+        timestamp = time.time()
+        save_transaction(int(nonce), w3.eth.chain_id, txReciept, timestamp)  # type: ignore
 
     return txReciept
 
