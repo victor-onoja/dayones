@@ -17,8 +17,8 @@ load_dotenv()
 # assumes that it is foundry that is used to compile the contrcts
 # if it is not foundry at least it must be a compatible output file
 # this sets the build directory
-BUILDPATH: pathlib.PurePath = pathlib.PurePath(r"out")
-BROADCASTPATH: pathlib.PurePath = pathlib.PurePath(r"broadcast\pyruns")
+BUILDPATH = pathlib.PurePath("out")
+BROADCASTPATH = pathlib.PurePath("broadcast") / "pyruns"
 
 
 def get_w3(url: str) -> Web3 | AsyncWeb3:
