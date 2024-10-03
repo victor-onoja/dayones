@@ -1,3 +1,4 @@
+// imports
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -21,7 +22,9 @@ import linkIcon from "./link-icon.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// main code
 const ListProductPage = () => {
+  // state variables
   const navigate = useNavigate();
   const { isConnected } = useAccount();
   const {
@@ -35,17 +38,8 @@ const ListProductPage = () => {
       hash,
     });
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
-  const [isAdvertEnabled, setIsAdvertEnabled] = useState(true);
+  const [isAdvertEnabled, setIsAdvertEnabled] = useState(false);
   const [isProductListed, setIsProductListed] = useState(false);
-  // const [productData, setProductData] = useState({
-  //   name: "rust",
-  //   price: "5",
-  //   lat: "-10.8544921875",
-  //   long: "49.82380908513249",
-  //   quantity: "2",
-  //   productURI:
-  //     "https://github.com/dashingfon/dayonesDemo/blob/master/uri.json",
-  // });
   const [productData, setProductData] = useState({
     name: "",
     price: "",
@@ -72,30 +66,7 @@ const ListProductPage = () => {
     },
   });
 
-  useEffect(() => {
-    if (isLocationEnabled) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setProductData({
-            ...productData,
-            lat: position.coords.latitude.toString(),
-            long: position.coords.longitude.toString(),
-          });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          toast.error("Failed to get your location. Please enter it manually.");
-        }
-      );
-    }
-  }, [isLocationEnabled, productData]);
-
-  useEffect(() => {
-    if (isProductListed) {
-      toast.success("Product listed successfully! Event received.");
-      navigate("/products");
-    }
-  }, [isProductListed, navigate]);
+  // functions
 
   const validateForm = () => {
     const errors = {};
@@ -207,6 +178,7 @@ const ListProductPage = () => {
       setIsLoading(false);
     }
   };
+  // use effect
 
   useEffect(() => {
     if (writeError) {
@@ -230,13 +202,39 @@ const ListProductPage = () => {
     }
   }, [isConfirmed, isProductListed]);
 
+  useEffect(() => {
+    if (isProductListed) {
+      toast.success("Product listed successfully! Event received.");
+      navigate("/products");
+    }
+  }, [isProductListed, navigate]);
+
+  useEffect(() => {
+    if (isLocationEnabled) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setProductData({
+            ...productData,
+            lat: position.coords.latitude.toString(),
+            long: position.coords.longitude.toString(),
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          toast.error("Failed to get your location. Please enter it manually.");
+        }
+      );
+    }
+  }, [isLocationEnabled, productData]);
+
+  // ui
   return (
     <div className="list-product-page">
       <nav className="list-product-navbar">
         <div className="container">
           <div className="logo">
             <img src={logo} alt="Dayones Logo" />
-            <span className="logo-text">dayones</span>
+            <span className="logo-text">DAYONES</span>
           </div>
           <span className="list-product-text">List Product</span>
         </div>
@@ -274,7 +272,7 @@ const ListProductPage = () => {
                     type="number"
                     id="price"
                     placeholder="Enter price"
-                    step="0.01"
+                    step="0.1"
                     value={productData.price}
                     onChange={handleChange}
                     required
@@ -388,7 +386,7 @@ const ListProductPage = () => {
                     <input
                       type="checkbox"
                       id="advert"
-                      checked={!isAdvertEnabled}
+                      checked={isAdvertEnabled}
                       onChange={() => setIsAdvertEnabled(!isAdvertEnabled)}
                     />
                     <span className="slider round"></span>
@@ -450,3 +448,14 @@ const ListProductPage = () => {
 };
 
 export default ListProductPage;
+
+// sample data
+// const [productData, setProductData] = useState({
+//   name: "rust",
+//   price: "5",
+//   lat: "-10.8544921875",
+//   long: "49.82380908513249",
+//   quantity: "2",
+//   productURI:
+//     "https://github.com/dashingfon/dayonesDemo/blob/master/uri.json",
+// });
