@@ -147,4 +147,4 @@ def deploy(
 # librarytx = deploy("Alpha", lib_build)
 
 contract_build = getBuild("OrderManager")
-contracttx = deploy("Alpha", contract_build)
+contracttx = deploy("PV", contract_build)

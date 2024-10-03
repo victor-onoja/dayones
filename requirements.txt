@@ -1,13 +1,12 @@
-fastapi==0.112.2
+fastapi
 uvicorn[standard]==0.30.6
 jinja2==3.1.4
-sqlmodel==0.0.9
+sqlmodel
 python-multipart==0.0.9
 python-jose==3.3.0
 requests==2.32.3
 python-dotenv==1.0.1
 psycopg2-binary==2.9.9
-python-dotenv==1.0.0
-web3==7.2.0
+web3
 
 # gunicorn==21.2.0
