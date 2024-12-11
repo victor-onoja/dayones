@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
-// import { Chain } from "wagmi/chains";
+import { arbitrum, arbitrumSepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 import LandingPage from "./components/LandingPage";
@@ -20,25 +20,25 @@ import CartPage from "./components/CartPage";
 import StartAdvertPage from "./components/StartAdvertPage";
 import ProductPage from "./components/ProductPage";
 
-const localChain = {
-  id: 31337,
-  name: "Localhost",
-  network: "localhost",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Dayones",
-    symbol: "DAY1",
-  },
-  rpcUrls: {
-    default: { http: ["http://127.0.0.1:8545"] },
-    public: { http: ["http://127.0.0.1:8545"] },
-  },
-};
+// const localChain = {
+//   id: 31337,
+//   name: "Localhost",
+//   network: "localhost",
+//   nativeCurrency: {
+//     decimals: 18,
+//     name: "Dayones",
+//     symbol: "DAY1",
+//   },
+//   rpcUrls: {
+//     default: { http: ["http://127.0.0.1:8545"] },
+//     public: { http: ["http://127.0.0.1:8545"] },
+//   },
+// };
 
 const web3Config = getDefaultConfig({
   appName: "Dayones",
   projectId: "d709a85b4762b0a7f7da0090486cb9eb",
-  chains: [localChain],
+  chains: [arbitrum, arbitrumSepolia],
 });
 
 const queryClient = new QueryClient();

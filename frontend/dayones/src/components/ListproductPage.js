@@ -5,7 +5,7 @@ import {
   useAccount,
   useWriteContract,
   useWaitForTransactionReceipt,
-  useWatchContractEvent,
+  // useWatchContractEvent,
 } from "wagmi";
 import { parseEther } from "ethers";
 import DAY1_ABI from "../constants/abi";
@@ -53,20 +53,23 @@ const ListProductPage = () => {
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
-  useWatchContractEvent({
-    address: CONTRACT_ADDRESS,
-    abi: DAY1_ABI[0].abi,
-    eventName: "ProductListed",
-    onLogs(logs) {
-      console.log("Product Listed Event:", logs);
-      setIsProductListed(true);
-    },
-    onError(error) {
-      console.log("Error", error);
-    },
-  });
+  // useWatchContractEvent({
+  //   address: CONTRACT_ADDRESS,
+  //   abi: DAY1_ABI[0].abi,
+  //   eventName: "ProductListed",
+  //   onLogs(logs) {
+  //     console.log("Product Listed Event:", logs);
+  //   },
+  //   onError(error) {
+  //     console.log("Error", error);
+  //   },
+  // });
 
   // functions
+
+  const handleLogoClick = () => {
+    navigate("/products");
+  };
 
   const validateForm = () => {
     const errors = {};
@@ -155,7 +158,8 @@ const ListProductPage = () => {
     try {
       writeContract({
         address: CONTRACT_ADDRESS,
-        abi: DAY1_ABI[0].abi,
+        abi: DAY1_ABI,
+        // abi: DAY1_ABI[0].abi,
         functionName: "listProduct",
         args: [
           {
@@ -188,8 +192,8 @@ const ListProductPage = () => {
   }, [writeError]);
 
   useEffect(() => {
-    if (isConfirmed && !isProductListed) {
-      toast.info("Transaction confirmed. Waiting for ProductListed event...");
+    if (isConfirmed) {
+      toast.info("Transaction confirmed.");
       setProductData({
         name: "",
         price: "",
@@ -199,13 +203,17 @@ const ListProductPage = () => {
         productURI: "",
         address: "",
       });
+      setIsProductListed(true);
     }
-  }, [isConfirmed, isProductListed]);
+  }, [isConfirmed]);
 
   useEffect(() => {
     if (isProductListed) {
-      toast.success("Product listed successfully! Event received.");
-      navigate("/products");
+      toast.success("Product listed successfully!");
+      // navigate("/products");
+      setTimeout(() => {
+        navigate("/products");
+      }, 2000);
     }
   }, [isProductListed, navigate]);
 
@@ -232,7 +240,7 @@ const ListProductPage = () => {
     <div className="list-product-page">
       <nav className="list-product-navbar">
         <div className="container">
-          <div className="logo">
+          <div className="logo" onClick={handleLogoClick}>
             <img src={logo} alt="Dayones Logo" />
             <span className="logo-text">DAYONES</span>
           </div>
@@ -398,16 +406,21 @@ const ListProductPage = () => {
                 type="submit"
                 className="btn-list-product"
                 disabled={
-                  isLoading || isPending || isConfirming || !isConnected
+                  isLoading ||
+                  isPending ||
+                  isConfirming ||
+                  !isConnected ||
+                  isConfirmed
                 }
               >
                 {isLoading || isPending
                   ? "Submitting Transaction..."
                   : isConfirming
                   ? "Confirming Transaction..."
-                  : isConfirmed && !isProductListed
-                  ? "Waiting for Event..."
-                  : "List Product"}
+                  : // isConfirmed && !isProductListed
+                    // ? "Waiting for Event..."
+                    // :
+                    "List Product"}
               </button>
             </form>
             {error && <div className="error-message">{error}</div>}
@@ -429,14 +442,14 @@ const ListProductPage = () => {
                 Transaction confirmed. Product listed successfully!
               </div>
             )}
-            {isConfirmed && !isProductListed && (
+            {/* {isConfirmed && !isProductListed && (
               <div className="transaction-status">
                 Transaction confirmed. Waiting for ProductListed event...
               </div>
-            )}
+            )} */}
             {isProductListed && (
               <div className="transaction-status success">
-                Product listed successfully! Event received.
+                Product listed successfully!
               </div>
             )}
           </div>

@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import "./CartPage.css";
 import logo from "./logo.png";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate("/products");
+  };
   // Sample cart data. In a real app, this would come from state or context.
   const [cartItems, setCartItems] = useState([
     {
@@ -42,9 +48,9 @@ const CartPage = () => {
     <div className="cart-page">
       <nav className="cart-navbar">
         <div className="container">
-          <div className="logo">
+          <div className="logo" onClick={handleLogoClick}>
             <img src={logo} alt="Dayones Logo" />
-            <span className="logo-text">dayones</span>
+            <span className="logo-text">DAYONES</span>
           </div>
           <span className="cart-text">Cart</span>
         </div>

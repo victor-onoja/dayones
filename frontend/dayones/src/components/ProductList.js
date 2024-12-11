@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAccount, useReadContract } from "wagmi";
 // import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "./logo.png";
 import "./ProductList.css";
+import DAY1_ABI from "../constants/abi";
+import CONTRACT_ADDRESS from "../constants/contract-address";
 
 const ProductCard = ({ product, myProducts }) => {
   // const [isFavorite, setIsFavorite] = useState(false);
@@ -56,137 +59,196 @@ const ProductCard = ({ product, myProducts }) => {
 };
 
 const ProductList = ({ horizontal = false, myProducts = false }) => {
-  // Mock data for demonstration
-  const products = [
-    {
-      id: 1,
-      vendor: "0x1234567890123456789012345678901234567890",
-      name: "Full Coffee Mug",
-      price: 0.2,
-      lat: 40712776,
-      long: -74005974,
-      quantity: 10,
-      productURI: {
-        mainImage:
-          "https://images.pexels.com/photos/942772/pexels-photo-942772.jpeg?auto=compress&cs=tinysrgb&w=800",
-        otherImages: [
-          "https://images.pexels.com/photos/942772/pexels-photo-942772.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "https://images.pexels.com/photos/942772/pexels-photo-942772.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "https://images.pexels.com/photos/942772/pexels-photo-942772.jpeg?auto=compress&cs=tinysrgb&w=800",
-        ],
-        description:
-          "This is a one of a kind coffee mug that is gotten from outer space, it is very durable and can be used for tea as well",
-        // keywords: ["bag", "fashion", "carryable"],
-        // change keywords to category in solidity fon
-        category: "Home",
-      },
-    },
-    {
-      id: 2,
-      vendor: "0x1234567890123453709616345678901264567890",
-      name: "Black Serious Shoe",
-      price: 0.5,
-      lat: 40714476,
-      long: -74005004,
-      quantity: 10,
-      productURI: {
-        mainImage:
-          "https://images.pexels.com/photos/296158/pexels-photo-296158.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        otherImages: [
-          "https://images.pexels.com/photos/296158/pexels-photo-296158.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-          "https://images.pexels.com/photos/296158/pexels-photo-296158.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-          "https://images.pexels.com/photos/296158/pexels-photo-296158.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        ],
-        description:
-          "This is a one of a kind serious shoe that is gotten from outer space, it is very durable and can be used as a defensive weapon",
-        category: "Fashion",
-      },
-    },
-    {
-      id: 3,
-      vendor: "0x1234567890689056789012357437901234567890",
-      name: "Placebo Pills",
-      price: 0.12,
-      lat: 40788776,
-      long: -74075974,
-      quantity: 10,
-      productURI: {
-        mainImage:
-          "https://images.pexels.com/photos/5699519/pexels-photo-5699519.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        otherImages: [
-          "https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-          "https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-          "https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        ],
-        description:
-          "This is a one of a kind placebo pill that is gotten from outer space, it is very durable and can be used as a sleeping pill",
-        category: "Home",
-      },
-    },
-    {
-      id: 4,
-      vendor: "0x123456789012345678901234567890664777890",
-      name: "Luxury Glasses",
-      price: 0.22,
-      lat: 40710076,
-      long: -74665974,
-      quantity: 10,
-      productURI: {
-        mainImage:
-          "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        otherImages: [
-          "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-          "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-          "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        ],
-        description:
-          "This is a one of a kind luxury glasses that is gotten from outer space, it is very durable and can be used as a sun shield",
-        category: "Fashion",
-      },
-    },
-    {
-      id: 5,
-      vendor: "0x1234567890123456789012345678901234567890",
-      name: "Quadcopter Drone",
-      price: 0.29,
-      lat: 40772776,
-      long: -74005004,
-      quantity: 10,
-      productURI: {
-        mainImage:
-          "https://images.pexels.com/photos/744366/pexels-photo-744366.jpeg?auto=compress&cs=tinysrgb&w=800",
-        otherImages: [
-          "https://images.pexels.com/photos/744366/pexels-photo-744366.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "https://images.pexels.com/photos/744366/pexels-photo-744366.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "https://images.pexels.com/photos/744366/pexels-photo-744366.jpeg?auto=compress&cs=tinysrgb&w=800",
-        ],
-        description:
-          "This is a one of a kind quadcopter drone that is gotten from outer space, it is very durable and can be used as a delivery machine",
-        category: "Electronics",
-      },
-    },
-    {
-      id: 6,
-      vendor: "0x1234567890123456789012345678661234567890",
-      name: "Cassette Tape",
-      price: 0.4,
-      lat: 40702776,
-      long: -74005900,
-      quantity: 10,
-      productURI: {
-        mainImage:
-          "https://images.pexels.com/photos/590663/pexels-photo-590663.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        otherImages: [
-          "https://images.pexels.com/photos/590663/pexels-photo-590663.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-          "https://images.pexels.com/photos/590663/pexels-photo-590663.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-          "https://images.pexels.com/photos/590663/pexels-photo-590663.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        ],
-        description:
-          "This is a one of a kind cassette bag that is gotten from outer space, it is very durable and can be used as a throwing material",
-        category: "Electronics",
-      },
-    },
-  ];
+  const { address } = useAccount();
+  const [products, setProducts] = useState([]);
+
+  //   // Mock data for demonstration
+  //   const products = [
+  //     {
+  //       id: 1,
+  //       vendor: "0x1234567890123456789012345678901234567890",
+  //       name: "Full Coffee Mug",
+  //       price: 0.2,
+  //       lat: 40712776,
+  //       long: -74005974,
+  //       quantity: 10,
+  //       productURI: {
+  //         mainImage:
+  //           "https://images.pexels.com/photos/942772/pexels-photo-942772.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //         otherImages: [
+  //           "https://images.pexels.com/photos/942772/pexels-photo-942772.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //           "https://images.pexels.com/photos/942772/pexels-photo-942772.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //           "https://images.pexels.com/photos/942772/pexels-photo-942772.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //         ],
+  //         description:
+  //           "This is a one of a kind coffee mug that is gotten from outer space, it is very durable and can be used for tea as well",
+  //         // keywords: ["bag", "fashion", "carryable"],
+  //         // change keywords to category in solidity fon
+  //         category: "Home",
+  //       },
+  //     },
+  //     {
+  //       id: 2,
+  //       vendor: "0x1234567890123453709616345678901264567890",
+  //       name: "Black Serious Shoe",
+  //       price: 0.5,
+  //       lat: 40714476,
+  //       long: -74005004,
+  //       quantity: 10,
+  //       productURI: {
+  //         mainImage:
+  //           "https://images.pexels.com/photos/296158/pexels-photo-296158.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //         otherImages: [
+  //           "https://images.pexels.com/photos/296158/pexels-photo-296158.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //           "https://images.pexels.com/photos/296158/pexels-photo-296158.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //           "https://images.pexels.com/photos/296158/pexels-photo-296158.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //         ],
+  //         description:
+  //           "This is a one of a kind serious shoe that is gotten from outer space, it is very durable and can be used as a defensive weapon",
+  //         category: "Fashion",
+  //       },
+  //     },
+  //     {
+  //       id: 3,
+  //       vendor: "0x1234567890689056789012357437901234567890",
+  //       name: "Placebo Pills",
+  //       price: 0.12,
+  //       lat: 40788776,
+  //       long: -74075974,
+  //       quantity: 10,
+  //       productURI: {
+  //         mainImage:
+  //           "https://images.pexels.com/photos/5699519/pexels-photo-5699519.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //         otherImages: [
+  //           "https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //           "https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //           "https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //         ],
+  //         description:
+  //           "This is a one of a kind placebo pill that is gotten from outer space, it is very durable and can be used as a sleeping pill",
+  //         category: "Home",
+  //       },
+  //     },
+  //     {
+  //       id: 4,
+  //       vendor: "0x123456789012345678901234567890664777890",
+  //       name: "Luxury Glasses",
+  //       price: 0.22,
+  //       lat: 40710076,
+  //       long: -74665974,
+  //       quantity: 10,
+  //       productURI: {
+  //         mainImage:
+  //           "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //         otherImages: [
+  //           "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //           "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //           "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //         ],
+  //         description:
+  //           "This is a one of a kind luxury glasses that is gotten from outer space, it is very durable and can be used as a sun shield",
+  //         category: "Fashion",
+  //       },
+  //     },
+  //     {
+  //       id: 5,
+  //       vendor: "0x1234567890123456789012345678901234567890",
+  //       name: "Quadcopter Drone",
+  //       price: 0.29,
+  //       lat: 40772776,
+  //       long: -74005004,
+  //       quantity: 10,
+  //       productURI: {
+  //         mainImage:
+  //           "https://images.pexels.com/photos/744366/pexels-photo-744366.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //         otherImages: [
+  //           "https://images.pexels.com/photos/744366/pexels-photo-744366.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //           "https://images.pexels.com/photos/744366/pexels-photo-744366.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //           "https://images.pexels.com/photos/744366/pexels-photo-744366.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //         ],
+  //         description:
+  //           "This is a one of a kind quadcopter drone that is gotten from outer space, it is very durable and can be used as a delivery machine",
+  //         category: "Electronics",
+  //       },
+  //     },
+  //     {
+  //       id: 6,
+  //       vendor: "0x1234567890123456789012345678661234567890",
+  //       name: "Cassette Tape",
+  //       price: 0.4,
+  //       lat: 40702776,
+  //       long: -74005900,
+  //       quantity: 10,
+  //       productURI: {
+  //         mainImage:
+  //           "https://images.pexels.com/photos/590663/pexels-photo-590663.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //         otherImages: [
+  //           "https://images.pexels.com/photos/590663/pexels-photo-590663.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //           "https://images.pexels.com/photos/590663/pexels-photo-590663.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //           "https://images.pexels.com/photos/590663/pexels-photo-590663.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //         ],
+  //         description:
+  //           "This is a one of a kind cassette bag that is gotten from outer space, it is very durable and can be used as a throwing material",
+  //         category: "Electronics",
+  //       },
+  //     },
+  //   ];
+
+  const {
+    data: buyableProducts,
+    isError: buyableError,
+    isLoading: buyableLoading,
+  } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: DAY1_ABI,
+    functionName: "getBuyableProducts",
+    args: [address],
+    //  watch: true,
+    //  enabled: !myProducts,
+  });
+
+  const {
+    data: listedProducts,
+    isError: listedError,
+    isLoading: listedLoading,
+  } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: DAY1_ABI,
+    functionName: "getListedProducts",
+    args: [address],
+    //  watch: true,
+    //  enabled: myProducts,
+  });
+
+  useEffect(() => {
+    const formatProducts = (rawProducts) => {
+      return rawProducts.map((product, index) => ({
+        id: index,
+        vendor: product.vendor,
+        name: product.name,
+        price: product.price.toString(),
+        lat: product.lat.toString(),
+        long: product.long.toString(),
+        quantity: product.quantity.toString(),
+        productURI: JSON.parse(product.productURI),
+        category: JSON.parse(product.productURI).category,
+      }));
+    };
+
+    if (myProducts && listedProducts) {
+      setProducts(formatProducts(listedProducts));
+    } else if (!myProducts && buyableProducts) {
+      setProducts(formatProducts(buyableProducts));
+    }
+  }, [buyableProducts, listedProducts, myProducts]);
+
+  if ((myProducts && listedLoading) || (!myProducts && buyableLoading)) {
+    return <div>Loading products...</div>;
+  }
+
+  if ((myProducts && listedError) || (!myProducts && buyableError)) {
+    return <div>Error loading products</div>;
+  }
 
   return (
     <div className={`product-list ${horizontal ? "horizontal" : "vertical"}`}>
